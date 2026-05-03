@@ -1,117 +1,87 @@
 import { useState } from "react";
 import {
-  LayoutDashboard,
-  Users,
-  UserPlus,
-  CalendarCheck,
-  HeartPulse,
-  Shield,
-  BookOpen,
-  School,
-  Clock,
-  FileText,
-  PenLine,
-  BarChart2,
-  FileBadge,
-  Receipt,
-  CreditCard,
-  TrendingDown,
-  Banknote,
-  Award,
-  MessageSquare,
-  MessageCircle,
-  Mail,
-  Bell,
-  Calendar,
-  Settings,
-  ChevronRight,
-  ChevronDown,
-  GraduationCap,
-  Bus,
-  Utensils,
-  Package,
-  Library,
+  LayoutDashboard, Users, UserPlus, CalendarCheck, HeartPulse, Shield,
+  BookOpen, School, Clock, FileText, PenLine, BarChart2, FileBadge,
+  Receipt, CreditCard, TrendingDown, Banknote, Award,
+  MessageSquare, MessageCircle, Mail, Bell, Calendar, Settings,
+  ChevronRight, ChevronDown, GraduationCap, Bus, Utensils,
+  Package, Library, ClipboardList, BookMarked, Star, BarChart,
+  DollarSign, Send, Hash,
 } from "lucide-react";
 
-const iconMap: Record<string, React.ReactNode> = {
-  users: <Users size={14} />,
-  "user-plus": <UserPlus size={14} />,
-  "calendar-check": <CalendarCheck size={14} />,
-  "heart-pulse": <HeartPulse size={14} />,
-  shield: <Shield size={14} />,
-  book: <BookOpen size={14} />,
-  school: <School size={14} />,
-  clock: <Clock size={14} />,
-  "file-text": <FileText size={14} />,
-  "pen-line": <PenLine size={14} />,
-  "chart-bar": <BarChart2 size={14} />,
-  "file-badge": <FileBadge size={14} />,
-  receipt: <Receipt size={14} />,
-  "credit-card": <CreditCard size={14} />,
-  "trending-down": <TrendingDown size={14} />,
-  banknote: <Banknote size={14} />,
-  award: <Award size={14} />,
-  "message-square": <MessageSquare size={14} />,
-  "message-circle": <MessageCircle size={14} />,
-  mail: <Mail size={14} />,
-  bell: <Bell size={14} />,
-  calendar: <Calendar size={14} />,
-  bus: <Bus size={14} />,
-  utensils: <Utensils size={14} />,
-  package: <Package size={14} />,
-  library: <Library size={14} />,
+type NavItem = {
+  label: string;
+  icon: React.ReactNode;
+  page: string;
+  hasChildren?: boolean;
 };
 
-const navSections = [
+type NavSection = {
+  section: string;
+  items: NavItem[];
+};
+
+const navSections: NavSection[] = [
   {
     section: "STUDENTS",
     items: [
-      { label: "All Students", icon: "users", page: "all-students", hasChildren: false },
-      { label: "Admissions", icon: "user-plus", page: "admissions" },
-      { label: "Attendance", icon: "calendar-check", page: "attendance" },
-      { label: "Health Records", icon: "heart-pulse", page: "health" },
-      { label: "Discipline", icon: "shield", page: "discipline" },
+      { label: "All Students", icon: <Users size={14} />, page: "all-students" },
+      { label: "Admissions", icon: <UserPlus size={14} />, page: "admissions" },
+      { label: "Attendance", icon: <CalendarCheck size={14} />, page: "attendance" },
+      { label: "Health Records", icon: <HeartPulse size={14} />, page: "health" },
+      { label: "Discipline", icon: <Shield size={14} />, page: "discipline" },
     ],
   },
   {
     section: "ACADEMICS",
     items: [
-      { label: "Subjects", icon: "book", page: "subjects" },
-      { label: "Classes", icon: "school", page: "classes", hasChildren: true },
-      { label: "Timetable", icon: "clock", page: "timetable" },
-      { label: "Homework", icon: "file-text", page: "homework" },
-      { label: "Exams", icon: "pen-line", page: "exams" },
-      { label: "Results", icon: "chart-bar", page: "results" },
-      { label: "Report Cards", icon: "file-badge", page: "reports" },
+      { label: "Subjects", icon: <BookOpen size={14} />, page: "subjects" },
+      { label: "Classes", icon: <School size={14} />, page: "classes", hasChildren: true },
+      { label: "Timetable", icon: <Clock size={14} />, page: "timetable" },
+      { label: "Homework", icon: <FileText size={14} />, page: "homework" },
+      { label: "Exams", icon: <PenLine size={14} />, page: "exams" },
+      { label: "Results", icon: <BarChart2 size={14} />, page: "results" },
+      { label: "Gradebook", icon: <BookMarked size={14} />, page: "gradebook" },
+      { label: "Report Cards", icon: <FileBadge size={14} />, page: "report-cards" },
     ],
   },
   {
     section: "FINANCE",
     items: [
-      { label: "Billing", icon: "receipt", page: "billing", hasChildren: true },
-      { label: "Payments", icon: "credit-card", page: "payments" },
-      { label: "Expenses", icon: "trending-down", page: "expenses" },
-      { label: "Payroll", icon: "banknote", page: "payroll" },
-      { label: "Scholarships", icon: "award", page: "scholarships" },
+      { label: "Billing", icon: <Receipt size={14} />, page: "billing", hasChildren: true },
+      { label: "Invoices", icon: <ClipboardList size={14} />, page: "invoices" },
+      { label: "Payments", icon: <CreditCard size={14} />, page: "payments" },
+      { label: "Expenses", icon: <TrendingDown size={14} />, page: "expenses" },
+      { label: "Payroll", icon: <Banknote size={14} />, page: "payroll" },
+      { label: "Scholarships", icon: <Award size={14} />, page: "scholarships" },
+      { label: "Financial Reports", icon: <BarChart size={14} />, page: "financial-reports" },
     ],
   },
   {
     section: "COMMUNICATION",
     items: [
-      { label: "SMS", icon: "message-square", page: "sms", hasChildren: true },
-      { label: "WhatsApp", icon: "message-circle", page: "whatsapp" },
-      { label: "Email", icon: "mail", page: "email" },
-      { label: "Notices", icon: "bell", page: "notices" },
-      { label: "Events", icon: "calendar", page: "events" },
+      { label: "Communication Hub", icon: <Hash size={14} />, page: "communication-hub" },
+      { label: "Notices", icon: <Bell size={14} />, page: "notices" },
+      { label: "SMS", icon: <MessageSquare size={14} />, page: "sms", hasChildren: true },
+      { label: "WhatsApp", icon: <MessageCircle size={14} />, page: "whatsapp" },
+      { label: "Email", icon: <Mail size={14} />, page: "email" },
+      { label: "Events", icon: <Calendar size={14} />, page: "events" },
+      { label: "Parent Chat", icon: <MessageSquare size={14} />, page: "parent-chat" },
     ],
   },
   {
     section: "OPERATIONS",
     items: [
-      { label: "Transport", icon: "bus", page: "transport" },
-      { label: "Feeding", icon: "utensils", page: "feeding" },
-      { label: "Inventory", icon: "package", page: "inventory" },
-      { label: "Library", icon: "library", page: "library-ops" },
+      { label: "Transport", icon: <Bus size={14} />, page: "transport" },
+      { label: "Feeding", icon: <Utensils size={14} />, page: "feeding" },
+      { label: "Inventory", icon: <Package size={14} />, page: "inventory" },
+      { label: "Library", icon: <Library size={14} />, page: "library-ops" },
+    ],
+  },
+  {
+    section: "REPORTS",
+    items: [
+      { label: "All Reports", icon: <BarChart2 size={14} />, page: "all-reports" },
     ],
   },
 ];
@@ -130,12 +100,56 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
     );
   };
 
+  const NavItemRow = ({ item }: { item: NavItem }) => {
+    const isActive = activePage === item.page;
+    const isExpanded = expandedItems.includes(item.label);
+
+    return (
+      <div
+        onClick={() => {
+          if (item.hasChildren) toggleItem(item.label);
+          if (item.page) onNavigate(item.page);
+        }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 9,
+          padding: "6px 12px",
+          borderRadius: 6,
+          cursor: "pointer",
+          color: isActive ? "white" : "#cbd5e1",
+          fontSize: 12.5,
+          justifyContent: "space-between",
+          background: isActive ? "linear-gradient(135deg,#7c3aed,#6d28d9)" : "transparent",
+          transition: "background 0.12s",
+          marginBottom: 1,
+        }}
+        onMouseEnter={(e) => {
+          if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
+        }}
+        onMouseLeave={(e) => {
+          if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+          <span style={{ color: isActive ? "white" : "#94a3b8", display: "flex", alignItems: "center" }}>{item.icon}</span>
+          <span>{item.label}</span>
+        </div>
+        {item.hasChildren && (
+          <span style={{ color: isActive ? "rgba(255,255,255,0.7)" : "#64748b" }}>
+            {isExpanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <aside
       style={{
         width: 220,
         minWidth: 220,
-        background: "linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%)",
+        background: "linear-gradient(180deg,#0f172a 0%,#1e1b4b 100%)",
         height: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -148,22 +162,12 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
       }}
     >
       {/* Logo */}
-      <div style={{ padding: "20px 16px 16px 16px" }}>
+      <div style={{ padding: "18px 16px 14px", flexShrink: 0 }}>
         <div
           style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, cursor: "pointer" }}
           onClick={() => onNavigate("dashboard")}
         >
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 8,
-              background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <div style={{ width: 34, height: 34, borderRadius: 8, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <GraduationCap size={18} color="white" />
           </div>
           <div>
@@ -171,34 +175,28 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
             <div style={{ color: "#a78bfa", fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>SchoolOS</div>
           </div>
         </div>
-        <div style={{ color: "#6b7280", fontSize: 10, marginTop: 4, paddingLeft: 2 }}>
-          Run your school on Maxibern
-        </div>
+        <div style={{ color: "#6b7280", fontSize: 10, paddingLeft: 2 }}>Run your school on Maxibern</div>
       </div>
 
-      {/* Dashboard item */}
-      <div style={{ padding: "4px 10px" }}>
+      {/* Dashboard */}
+      <div style={{ padding: "4px 10px 2px", flexShrink: 0 }}>
         <div
           onClick={() => onNavigate("dashboard")}
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 10,
+            gap: 9,
             padding: "8px 12px",
             borderRadius: 8,
-            background: activePage === "dashboard"
-              ? "linear-gradient(135deg, #7c3aed, #6d28d9)"
-              : "transparent",
+            background: activePage === "dashboard" ? "linear-gradient(135deg,#7c3aed,#6d28d9)" : "transparent",
             cursor: "pointer",
-            transition: "background 0.15s",
+            transition: "background 0.12s",
           }}
           onMouseEnter={(e) => {
-            if (activePage !== "dashboard")
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
+            if (activePage !== "dashboard") (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
           }}
           onMouseLeave={(e) => {
-            if (activePage !== "dashboard")
-              (e.currentTarget as HTMLElement).style.background = "transparent";
+            if (activePage !== "dashboard") (e.currentTarget as HTMLElement).style.background = "transparent";
           }}
         >
           <LayoutDashboard size={15} color="white" />
@@ -206,109 +204,32 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
         </div>
       </div>
 
-      {/* Nav sections */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 10px", paddingBottom: 60 }}>
+      {/* Scrollable nav */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "4px 10px", paddingBottom: 64 }}>
         {navSections.map((section) => (
-          <div key={section.section} style={{ marginBottom: 8 }}>
-            <div
-              style={{
-                color: "#6b7280",
-                fontSize: 9,
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                padding: "8px 12px 4px",
-                textTransform: "uppercase",
-              }}
-            >
+          <div key={section.section} style={{ marginBottom: 6 }}>
+            <div style={{ color: "#6b7280", fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", padding: "8px 12px 4px", textTransform: "uppercase" }}>
               {section.section}
             </div>
-            {section.items.map((item) => {
-              const isActive = activePage === item.page;
-              const isExpanded = expandedItems.includes(item.label);
-              return (
-                <div key={item.label}>
-                  <div
-                    onClick={() => {
-                      if (item.hasChildren) toggleItem(item.label);
-                      if (item.page) onNavigate(item.page);
-                    }}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      padding: "6px 12px",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      color: isActive ? "white" : "#cbd5e1",
-                      fontSize: 12.5,
-                      justifyContent: "space-between",
-                      background: isActive
-                        ? "linear-gradient(135deg, #7c3aed, #6d28d9)"
-                        : "transparent",
-                      transition: "background 0.12s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive)
-                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive)
-                        (e.currentTarget as HTMLElement).style.background = "transparent";
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ color: isActive ? "white" : "#94a3b8" }}>{iconMap[item.icon]}</span>
-                      <span>{item.label}</span>
-                    </div>
-                    {item.hasChildren && (
-                      <span style={{ color: isActive ? "rgba(255,255,255,0.7)" : "#64748b" }}>
-                        {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            {section.items.map((item) => (
+              <NavItemRow key={item.label} item={item} />
+            ))}
           </div>
         ))}
       </div>
 
       {/* Settings */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: "10px 10px",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(0,0,0,0.2)",
-        }}
-      >
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px", borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.25)" }}>
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            padding: "7px 12px",
-            borderRadius: 6,
-            cursor: "pointer",
-            color: "#94a3b8",
-            fontSize: 12.5,
-            justifyContent: "space-between",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "transparent";
-          }}
+          style={{ display: "flex", alignItems: "center", gap: 9, padding: "7px 12px", borderRadius: 6, cursor: "pointer", color: "#94a3b8", fontSize: 12.5, justifyContent: "space-between" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <Settings size={14} />
             <span>Settings</span>
           </div>
-          <ChevronRight size={12} />
+          <ChevronRight size={11} />
         </div>
       </div>
     </aside>
