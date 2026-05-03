@@ -16,6 +16,32 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
+## Artifacts
+
+### Maxibern SchoolOS Dashboard (`artifacts/school-dashboard`)
+- **Type**: React + Vite web app, served at `/`
+- **Purpose**: School management dashboard UI prototype
+- **Stack**: React, Vite, Tailwind CSS, Lucide icons, ApexCharts
+- **Data**: Fully static/dummy data — no backend, no database
+- **Components**:
+  - `Sidebar` — dark navy gradient sidebar with full navigation
+  - `Topbar` — top header with search, school selector, notifications, user profile
+  - `DashboardHeader` — greeting + date picker
+  - `KpiCards` — 5 KPI metric cards (students, attendance, fees, revenue, top class)
+  - `FeeCollectionChart` — ApexCharts area/line chart for fee collection
+  - `AttendanceChart` — ApexCharts bar chart for weekly attendance
+  - `Announcements` — announcement list panel
+  - `RecentPayments` — recent payment transactions list
+  - `OutstandingFeesChart` — ApexCharts donut chart for fees by class
+  - `QuickActions` — 6 action buttons grid
+  - `TransportStatus` — radial chart + bus status breakdown
+  - `TodaySchedule` — class schedule for the day
+  - `EventsCalendar` — upcoming events list
+
+### API Server (`artifacts/api-server`)
+- Express 5 server at `/api`
+- Health check at `/api/healthz`
+
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
