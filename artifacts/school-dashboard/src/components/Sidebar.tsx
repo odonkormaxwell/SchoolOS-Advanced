@@ -27,6 +27,10 @@ import {
   ChevronRight,
   ChevronDown,
   GraduationCap,
+  Bus,
+  Utensils,
+  Package,
+  Library,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -52,55 +56,73 @@ const iconMap: Record<string, React.ReactNode> = {
   mail: <Mail size={14} />,
   bell: <Bell size={14} />,
   calendar: <Calendar size={14} />,
+  bus: <Bus size={14} />,
+  utensils: <Utensils size={14} />,
+  package: <Package size={14} />,
+  library: <Library size={14} />,
 };
 
 const navSections = [
   {
     section: "STUDENTS",
     items: [
-      { label: "All Students", icon: "users", hasChildren: true },
-      { label: "Admissions", icon: "user-plus" },
-      { label: "Attendance", icon: "calendar-check" },
-      { label: "Health Records", icon: "heart-pulse" },
-      { label: "Discipline", icon: "shield" },
+      { label: "All Students", icon: "users", page: "all-students", hasChildren: false },
+      { label: "Admissions", icon: "user-plus", page: "admissions" },
+      { label: "Attendance", icon: "calendar-check", page: "attendance" },
+      { label: "Health Records", icon: "heart-pulse", page: "health" },
+      { label: "Discipline", icon: "shield", page: "discipline" },
     ],
   },
   {
     section: "ACADEMICS",
     items: [
-      { label: "Subjects", icon: "book" },
-      { label: "Classes", icon: "school", hasChildren: true },
-      { label: "Timetable", icon: "clock" },
-      { label: "Homework", icon: "file-text" },
-      { label: "Exams", icon: "pen-line" },
-      { label: "Results", icon: "chart-bar" },
-      { label: "Report Cards", icon: "file-badge" },
+      { label: "Subjects", icon: "book", page: "subjects" },
+      { label: "Classes", icon: "school", page: "classes", hasChildren: true },
+      { label: "Timetable", icon: "clock", page: "timetable" },
+      { label: "Homework", icon: "file-text", page: "homework" },
+      { label: "Exams", icon: "pen-line", page: "exams" },
+      { label: "Results", icon: "chart-bar", page: "results" },
+      { label: "Report Cards", icon: "file-badge", page: "reports" },
     ],
   },
   {
     section: "FINANCE",
     items: [
-      { label: "Billing", icon: "receipt", hasChildren: true },
-      { label: "Payment", icon: "credit-card" },
-      { label: "Expenses", icon: "trending-down" },
-      { label: "Payroll", icon: "banknote" },
-      { label: "Scholarships", icon: "award" },
+      { label: "Billing", icon: "receipt", page: "billing", hasChildren: true },
+      { label: "Payments", icon: "credit-card", page: "payments" },
+      { label: "Expenses", icon: "trending-down", page: "expenses" },
+      { label: "Payroll", icon: "banknote", page: "payroll" },
+      { label: "Scholarships", icon: "award", page: "scholarships" },
     ],
   },
   {
     section: "COMMUNICATION",
     items: [
-      { label: "SMS", icon: "message-square", hasChildren: true },
-      { label: "WhatsApp", icon: "message-circle" },
-      { label: "Email", icon: "mail" },
-      { label: "Notices", icon: "bell" },
-      { label: "Events", icon: "calendar" },
+      { label: "SMS", icon: "message-square", page: "sms", hasChildren: true },
+      { label: "WhatsApp", icon: "message-circle", page: "whatsapp" },
+      { label: "Email", icon: "mail", page: "email" },
+      { label: "Notices", icon: "bell", page: "notices" },
+      { label: "Events", icon: "calendar", page: "events" },
+    ],
+  },
+  {
+    section: "OPERATIONS",
+    items: [
+      { label: "Transport", icon: "bus", page: "transport" },
+      { label: "Feeding", icon: "utensils", page: "feeding" },
+      { label: "Inventory", icon: "package", page: "inventory" },
+      { label: "Library", icon: "library", page: "library-ops" },
     ],
   },
 ];
 
-export default function Sidebar() {
-  const [expandedItems, setExpandedItems] = useState<string[]>(["All Students"]);
+interface SidebarProps {
+  activePage: string;
+  onNavigate: (page: string) => void;
+}
+
+export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleItem = (label: string) => {
     setExpandedItems((prev) =>
@@ -127,7 +149,10 @@ export default function Sidebar() {
     >
       {/* Logo */}
       <div style={{ padding: "20px 16px 16px 16px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+        <div
+          style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, cursor: "pointer" }}
+          onClick={() => onNavigate("dashboard")}
+        >
           <div
             style={{
               width: 34,
@@ -142,12 +167,8 @@ export default function Sidebar() {
             <GraduationCap size={18} color="white" />
           </div>
           <div>
-            <div style={{ color: "white", fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>
-              Maxibern
-            </div>
-            <div style={{ color: "#a78bfa", fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>
-              SchoolOS
-            </div>
+            <div style={{ color: "white", fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>Maxibern</div>
+            <div style={{ color: "#a78bfa", fontWeight: 700, fontSize: 13, lineHeight: 1.2 }}>SchoolOS</div>
           </div>
         </div>
         <div style={{ color: "#6b7280", fontSize: 10, marginTop: 4, paddingLeft: 2 }}>
@@ -158,14 +179,26 @@ export default function Sidebar() {
       {/* Dashboard item */}
       <div style={{ padding: "4px 10px" }}>
         <div
+          onClick={() => onNavigate("dashboard")}
           style={{
             display: "flex",
             alignItems: "center",
             gap: 10,
             padding: "8px 12px",
             borderRadius: 8,
-            background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
+            background: activePage === "dashboard"
+              ? "linear-gradient(135deg, #7c3aed, #6d28d9)"
+              : "transparent",
             cursor: "pointer",
+            transition: "background 0.15s",
+          }}
+          onMouseEnter={(e) => {
+            if (activePage !== "dashboard")
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
+          }}
+          onMouseLeave={(e) => {
+            if (activePage !== "dashboard")
+              (e.currentTarget as HTMLElement).style.background = "transparent";
           }}
         >
           <LayoutDashboard size={15} color="white" />
@@ -190,11 +223,15 @@ export default function Sidebar() {
               {section.section}
             </div>
             {section.items.map((item) => {
+              const isActive = activePage === item.page;
               const isExpanded = expandedItems.includes(item.label);
               return (
                 <div key={item.label}>
                   <div
-                    onClick={() => item.hasChildren && toggleItem(item.label)}
+                    onClick={() => {
+                      if (item.hasChildren) toggleItem(item.label);
+                      if (item.page) onNavigate(item.page);
+                    }}
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -202,24 +239,29 @@ export default function Sidebar() {
                       padding: "6px 12px",
                       borderRadius: 6,
                       cursor: "pointer",
-                      color: "#cbd5e1",
+                      color: isActive ? "white" : "#cbd5e1",
                       fontSize: 12.5,
                       justifyContent: "space-between",
-                      transition: "background 0.15s",
+                      background: isActive
+                        ? "linear-gradient(135deg, #7c3aed, #6d28d9)"
+                        : "transparent",
+                      transition: "background 0.12s",
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
+                      if (!isActive)
+                        (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                      if (!isActive)
+                        (e.currentTarget as HTMLElement).style.background = "transparent";
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ color: "#94a3b8" }}>{iconMap[item.icon]}</span>
+                      <span style={{ color: isActive ? "white" : "#94a3b8" }}>{iconMap[item.icon]}</span>
                       <span>{item.label}</span>
                     </div>
                     {item.hasChildren && (
-                      <span style={{ color: "#64748b" }}>
+                      <span style={{ color: isActive ? "rgba(255,255,255,0.7)" : "#64748b" }}>
                         {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                       </span>
                     )}
