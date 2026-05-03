@@ -1,0 +1,319 @@
+Build only the dashboard UI for my school management software called **Maxibern SchoolOS**.
+
+I have attached a screenshot. Recreate the dashboard UI **exactly as shown in the screenshot**. Do not redesign it. Do not change the layout. Do not change the sidebar structure, card positions, spacing, colors, typography, icon style, shadows, border radius, or overall visual hierarchy. The goal is to match the screenshot **as closely as possible (pixel-perfect recreation)**.
+
+## IMPORTANT STACK REQUIREMENTS
+
+This project uses **Laravel**.
+
+Strictly use:
+
+* Laravel 12
+* Laravel Blade
+* Laravel Livewire 3
+* Volt components
+* Tailwind CSS
+* Alpine.js
+* Lucide icons
+* ApexCharts (for charts)
+* MySQL-ready structure (but no DB connection needed now)
+* Static / dummy data only
+
+Do NOT use:
+
+* React
+* Vue
+* Next.js
+* Nuxt
+* Inertia
+* Any SPA frontend framework
+
+Use Laravel-native architecture only.
+
+Build this as **production-quality frontend code**, with **clean component architecture**, **scalable reusable partials**, and **modular Livewire components**, because this dashboard will later expand into a full SaaS school management platform.
+
+---
+
+## PROJECT STRUCTURE
+
+Use proper Laravel structure:
+
+* app/Livewire/
+* resources/views/layouts/
+* resources/views/livewire/
+* resources/views/components/
+* resources/css/
+* routes/web.php
+
+Create reusable components for:
+
+* Sidebar
+* Header / Topbar
+* KPI cards
+* Charts
+* Quick action cards
+* Announcement cards
+* Recent payment list
+* Calendar card
+* Transport status card
+* Schedule card
+
+---
+
+## DESIGN REQUIREMENT
+
+Recreate the attached screenshot exactly.
+
+### Sidebar (Dark Navy)
+
+Include:
+Logo:
+**Maxibern SchoolOS**
+
+Tagline:
+**Run your school on Maxibern**
+
+Navigation:
+
+Dashboard
+
+Students
+
+* All Students
+* Admissions
+* Attendance
+* Health Records
+* Discipline
+
+Academics
+
+* Subjects
+* Classes
+* Timetable
+* Homework
+* Exams
+* Results
+* Report Cards
+
+Finance
+
+* Billing
+* Payment
+* Expenses
+* Payroll
+* Scholarships
+
+Communication
+
+* SMS
+* WhatsApp
+* Email
+* Notices
+* Events
+
+Bottom:
+Settings
+
+Dashboard must be active in purple.
+
+Sidebar must match screenshot:
+
+* dark navy gradient
+* rounded menu items
+* white text
+* soft hover effect
+* premium SaaS feel
+
+---
+
+## TOP HEADER
+
+Include:
+Left:
+
+* Hamburger menu icon
+
+Center:
+Search bar:
+Placeholder:
+**Search for students, parents, invoices...**
+
+Right:
+
+* School selector dropdown:
+  Happy Kids Basic School
+
+* Notification bell icon + badge
+
+* Chat icon
+
+* User profile:
+  Name:
+  Emmanuel Mensah
+
+Role:
+Headteacher
+
+Avatar image placeholder
+
+Dropdown arrow
+
+---
+
+## MAIN DASHBOARD
+
+Header:
+Good morning, Mr. Mensah 👋
+
+Subtext:
+Here’s what’s happening in your school today.
+
+Date picker:
+Wednesday, 15 May 2024
+
+---
+
+## KPI CARDS
+
+Create exactly:
+
+1.
+
+Total Students
+1,248
++12 this month
+
+2.
+
+Attendance Today
+92.6%
++3.4% vs yesterday
+
+3.
+
+Outstanding Fees
+GH₵ 47,850
+-8.7% vs last month
+
+4.
+
+Revenue This Month
+GH₵ 128,650
++18.4% vs last month
+
+5.
+
+Top Class (Avg.)
+P6 – Topaz
+76.5%
+
+Cards:
+
+* rounded corners
+* soft shadows
+* pastel icon background
+* premium clean typography
+
+---
+
+## MAIN GRID CONTENT
+
+Create:
+
+### Fee Collection Overview
+
+Line chart
+
+### Student Attendance (This Week)
+
+Bar chart
+
+### Announcements panel
+
+With:
+
+* PTA Meeting
+* Mid-Term Exams
+* Bus Routes Update
+
+### Recent Payments
+
+List card
+
+### Outstanding Fees by Class
+
+Donut chart
+
+### Quick Actions
+
+Buttons:
+
+* Add Student
+* Take Attendance
+* Create Invoice
+* Send Notice
+* Record Payment
+* View Reports
+
+### Transport Status
+
+Circular progress card
+
+### Today’s Schedule
+
+Class schedule card
+
+### Events Calendar
+
+Upcoming events card
+
+---
+
+## STYLING
+
+Use:
+Fonts:
+
+* Poppins OR Inter
+
+Design:
+
+* premium SaaS dashboard
+* generous spacing
+* white background
+* clean card system
+* soft shadows
+* rounded corners
+* subtle borders
+* elegant iconography
+* smooth hover states
+* desktop-first responsive design
+
+Must visually feel like:
+
+* Stripe admin dashboard
+* Notion simplicity
+* premium African SaaS
+
+---
+
+## IMPORTANT
+
+Do NOT:
+
+* add authentication pages
+* add login
+* add backend logic
+* add database
+* redesign anything
+* invent extra pages
+
+Only build the attached dashboard screenshot.
+
+Match layout as close as possible.
+
+Use static data.
+
+Final output should open directly to this dashboard page.
+
+Deliver complete Laravel + Livewire frontend code only.
