@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu, Search, ChevronDown, Bell, MessageCircle, Command, X, Check, AlertCircle, Bus, CreditCard, Users, CalendarCheck, BookOpen, Receipt } from "lucide-react";
+import { Menu, Search, ChevronDown, Bell, MessageCircle, Command, X, Check, Bus, CreditCard, Users, CalendarCheck, Receipt } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 const notifications = [
   { id: 1, icon: "absent", title: "Kofi Asante marked absent", desc: "P6 – Topaz • Auto-alert sent to parent", time: "5 min ago", read: false, color: "#dc2626", bg: "#fee2e2", page: "attendance" },
@@ -11,11 +12,8 @@ const notifications = [
 ];
 
 const notifIconMap: Record<string, React.ReactNode> = {
-  absent: <CalendarCheck size={14} />,
-  payment: <CreditCard size={14} />,
-  bus: <Bus size={14} />,
-  fee: <Receipt size={14} />,
-  admission: <Users size={14} />,
+  absent: <CalendarCheck size={14} />, payment: <CreditCard size={14} />,
+  bus: <Bus size={14} />, fee: <Receipt size={14} />, admission: <Users size={14} />,
 };
 
 const searchIndex = [
@@ -30,8 +28,6 @@ const searchIndex = [
   { type: "student", label: "Kofi Junior Asante", icon: "👤", page: "all-students", sub: "P6 – Topaz · STU-2024-0012" },
   { type: "student", label: "Ama Serwaa Ofori", icon: "👤", page: "all-students", sub: "P6 – Topaz · STU-2024-0013" },
   { type: "student", label: "Daniel Nii Lartey", icon: "👤", page: "all-students", sub: "P6 – Topaz · STU-2024-0014" },
-  { type: "student", label: "Akosua Adwoa Mensah", icon: "👤", page: "all-students", sub: "P6 – Topaz · STU-2024-0015" },
-  { type: "student", label: "Yaw Antwi Boakye", icon: "👤", page: "all-students", sub: "P6 – Topaz · STU-2024-0016" },
   { type: "action", label: "Mark Attendance", icon: "✅", page: "attendance", sub: "Take attendance for today" },
   { type: "action", label: "Create Invoice", icon: "📄", page: "billing", sub: "Generate a new invoice" },
   { type: "action", label: "New Admission", icon: "📋", page: "admissions", sub: "Add a new application" },
@@ -40,6 +36,7 @@ const searchIndex = [
 
 export default function Topbar() {
   const { onNavigate } = useApp();
+  const { isMobile, isTablet, isDesktop } = useWindowSize();
   const [notifOpen, setNotifOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,35 +44,28 @@ export default function Topbar() {
   const notifRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
+  const sidebarWidth = isMobile ? 0 : isTablet ? 64 : 220;
   const unreadCount = notifs.filter((n) => !n.read).length;
 
   const filteredResults = searchQuery.trim()
-    ? searchIndex.filter((item) =>
-        item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.sub && item.sub.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
+    ? searchIndex.filter((item) => item.label.toLowerCase().includes(searchQuery.toLowerCase()) || ("sub" in item && item.sub && item.sub.toLowerCase().includes(searchQuery.toLowerCase())))
     : searchIndex.filter((item) => item.type === "page");
 
+  const resultsByType: Record<string, typeof searchIndex> = {};
+  filteredResults.forEach((r) => { if (!resultsByType[r.type]) resultsByType[r.type] = []; resultsByType[r.type].push(r); });
+  const typeLabel: Record<string, string> = { page: "Pages", student: "Students", action: "Actions" };
+
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
-        setNotifOpen(false);
-      }
-    };
+    const handler = (e: MouseEvent) => { if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false); };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  useEffect(() => {
-    if (searchOpen && searchRef.current) searchRef.current.focus();
-  }, [searchOpen]);
+  useEffect(() => { if (searchOpen && searchRef.current) searchRef.current.focus(); }, [searchOpen]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setSearchOpen(true);
-      }
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSearchOpen(true); }
       if (e.key === "Escape") { setSearchOpen(false); setNotifOpen(false); }
     };
     document.addEventListener("keydown", handler);
@@ -86,67 +76,65 @@ export default function Topbar() {
 
   const handleNotifClick = (n: typeof notifications[0]) => {
     setNotifs((prev) => prev.map((item) => item.id === n.id ? { ...item, read: true } : item));
-    onNavigate(n.page);
-    setNotifOpen(false);
+    onNavigate(n.page); setNotifOpen(false);
   };
-
-  const handleSearchSelect = (item: typeof searchIndex[0]) => {
-    setSearchOpen(false);
-    setSearchQuery("");
-    onNavigate(item.page);
-  };
-
-  const resultsByType: Record<string, typeof searchIndex> = {};
-  filteredResults.forEach((r) => {
-    if (!resultsByType[r.type]) resultsByType[r.type] = [];
-    resultsByType[r.type].push(r);
-  });
-
-  const typeLabel: Record<string, string> = { page: "Pages", student: "Students", action: "Actions" };
 
   return (
     <>
       <header style={{
-        position: "fixed", top: 0, left: 220, right: 0, height: 56,
+        position: "fixed", top: 0, left: sidebarWidth, right: 0, height: 56,
         background: "white", borderBottom: "1px solid #e5e7eb",
-        display: "flex", alignItems: "center", padding: "0 20px", gap: 16, zIndex: 30,
+        display: "flex", alignItems: "center",
+        padding: isMobile ? "0 12px" : "0 20px",
+        gap: isMobile ? 10 : 16, zIndex: 30,
+        transition: "left 0.2s",
       }}>
-        <button style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", padding: 4 }}>
-          <Menu size={20} />
+        {/* Hamburger - only on mobile to open search */}
+        <button
+          onClick={() => setSearchOpen(true)}
+          style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", padding: 4 }}
+        >
+          <Search size={20} />
         </button>
 
-        {/* Search bar */}
-        <div
-          onClick={() => setSearchOpen(true)}
-          style={{ flex: 1, maxWidth: 380, position: "relative", display: "flex", alignItems: "center", cursor: "pointer" }}
-        >
-          <Search size={14} style={{ position: "absolute", left: 10, color: "#9ca3af", pointerEvents: "none" }} />
-          <div style={{
-            width: "100%", padding: "7px 10px 7px 32px", border: "1px solid #e5e7eb",
-            borderRadius: 8, fontSize: 12.5, color: "#9ca3af", background: "#f9fafb", userSelect: "none",
-          }}>
-            Search for students, parents, invoices...
+        {/* Search bar — hidden on mobile (use button above) */}
+        {!isMobile && (
+          <div
+            onClick={() => setSearchOpen(true)}
+            style={{ flex: 1, maxWidth: 380, position: "relative", display: "flex", alignItems: "center", cursor: "pointer" }}
+          >
+            <Search size={14} style={{ position: "absolute", left: 10, color: "#9ca3af", pointerEvents: "none" }} />
+            <div style={{ width: "100%", padding: "7px 10px 7px 32px", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 12.5, color: "#9ca3af", background: "#f9fafb", userSelect: "none" }}>
+              Search for students, parents, invoices...
+            </div>
+            <div style={{ position: "absolute", right: 10, display: "flex", alignItems: "center", gap: 2, color: "#9ca3af", fontSize: 11 }}>
+              <Command size={11} /><span>K</span>
+            </div>
           </div>
-          <div style={{ position: "absolute", right: 10, display: "flex", alignItems: "center", gap: 2, color: "#9ca3af", fontSize: 11 }}>
-            <Command size={11} /><span>K</span>
+        )}
+
+        {/* Mobile title */}
+        {isMobile && (
+          <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 26, height: 26, borderRadius: 6, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>🎓</div>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>SchoolOS</span>
           </div>
-        </div>
+        )}
 
-        <div style={{ flex: 1 }} />
+        <div style={{ flex: isMobile ? 0 : 1 }} />
 
-        {/* School selector */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", border: "1px solid #e5e7eb", borderRadius: 8, cursor: "pointer", background: "white" }}>
-          <div style={{ width: 24, height: 24, borderRadius: "50%", background: "linear-gradient(135deg, #fbbf24, #f59e0b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>🏫</div>
-          <span style={{ fontSize: 12.5, color: "#374151", fontWeight: 500, whiteSpace: "nowrap" }}>Happy Kids Basic School</span>
-          <ChevronDown size={13} color="#9ca3af" />
-        </div>
+        {/* School selector - hidden on mobile */}
+        {!isMobile && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", border: "1px solid #e5e7eb", borderRadius: 8, cursor: "pointer", background: "white" }}>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "linear-gradient(135deg,#fbbf24,#f59e0b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>🏫</div>
+            {isDesktop && <span style={{ fontSize: 12.5, color: "#374151", fontWeight: 500, whiteSpace: "nowrap" }}>Happy Kids Basic School</span>}
+            <ChevronDown size={13} color="#9ca3af" />
+          </div>
+        )}
 
         {/* Notification bell */}
         <div ref={notifRef} style={{ position: "relative" }}>
-          <button
-            onClick={() => setNotifOpen((v) => !v)}
-            style={{ background: "none", border: "none", cursor: "pointer", position: "relative", display: "flex", padding: 4 }}
-          >
+          <button onClick={() => setNotifOpen((v) => !v)} style={{ background: "none", border: "none", cursor: "pointer", position: "relative", display: "flex", padding: 4 }}>
             <Bell size={19} color={notifOpen ? "#7c3aed" : "#6b7280"} />
             {unreadCount > 0 && (
               <div style={{ position: "absolute", top: 0, right: 0, width: 16, height: 16, background: "#ef4444", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "white", fontWeight: 700 }}>
@@ -157,9 +145,10 @@ export default function Topbar() {
 
           {notifOpen && (
             <div style={{
-              position: "absolute", top: 40, right: 0, width: 360, background: "white",
-              borderRadius: 12, boxShadow: "0 8px 32px rgba(0,0,0,0.14)", border: "1px solid #e5e7eb",
-              zIndex: 100, animation: "fadeIn 0.15s ease", overflow: "hidden",
+              position: "absolute", top: 40, right: isMobile ? -50 : 0,
+              width: isMobile ? "calc(100vw - 24px)" : 360,
+              background: "white", borderRadius: 12, boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
+              border: "1px solid #e5e7eb", zIndex: 100, animation: "fadeIn 0.15s ease", overflow: "hidden",
             }}>
               <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #f3f4f6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
@@ -174,14 +163,8 @@ export default function Topbar() {
               </div>
               <div style={{ maxHeight: 340, overflowY: "auto" }}>
                 {notifs.map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => handleNotifClick(n)}
-                    style={{
-                      display: "flex", gap: 12, padding: "12px 16px", cursor: "pointer",
-                      background: n.read ? "white" : "#faf5ff", borderBottom: "1px solid #f9fafb",
-                      transition: "background 0.1s",
-                    }}
+                  <div key={n.id} onClick={() => handleNotifClick(n)}
+                    style={{ display: "flex", gap: 12, padding: "12px 16px", cursor: "pointer", background: n.read ? "white" : "#faf5ff", borderBottom: "1px solid #f9fafb", transition: "background 0.1s" }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f9fafb"; }}
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = n.read ? "white" : "#faf5ff"; }}
                   >
@@ -193,7 +176,7 @@ export default function Topbar() {
                         <span style={{ fontSize: 12.5, fontWeight: n.read ? 500 : 700, color: "#111827" }}>{n.title}</span>
                         {!n.read && <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#7c3aed", flexShrink: 0, marginTop: 4, marginLeft: 6 }} />}
                       </div>
-                      <div style={{ fontSize: 11.5, color: "#6b7280", marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{n.desc}</div>
+                      <div style={{ fontSize: 11.5, color: "#6b7280", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n.desc}</div>
                       <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2 }}>{n.time}</div>
                     </div>
                   </div>
@@ -208,67 +191,52 @@ export default function Topbar() {
           )}
         </div>
 
-        {/* Chat */}
-        <button
-          onClick={() => onNavigate("communication-hub")}
-          style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", padding: 4 }}
-        >
-          <MessageCircle size={19} />
-        </button>
+        {/* Chat — hidden on mobile */}
+        {!isMobile && (
+          <button onClick={() => onNavigate("communication-hub")} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", padding: 4 }}>
+            <MessageCircle size={19} />
+          </button>
+        )}
 
-        {/* User profile */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg, #6366f1, #8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 700, fontSize: 13 }}>EM</div>
-          <div>
-            <div style={{ fontSize: 12.5, fontWeight: 600, color: "#111827", lineHeight: 1.3 }}>Emmanuel Mensah</div>
-            <div style={{ fontSize: 11, color: "#9ca3af", lineHeight: 1.3 }}>Headteacher</div>
-          </div>
-          <ChevronDown size={13} color="#9ca3af" />
+        {/* User avatar */}
+        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 0 : 8, cursor: "pointer" }}>
+          <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 700, fontSize: 12 }}>EM</div>
+          {!isMobile && (
+            <div>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: "#111827", lineHeight: 1.3 }}>Emmanuel Mensah</div>
+              <div style={{ fontSize: 11, color: "#9ca3af", lineHeight: 1.3 }}>Headteacher</div>
+            </div>
+          )}
+          {!isMobile && <ChevronDown size={13} color="#9ca3af" />}
         </div>
       </header>
 
-      {/* Search Modal / Command Palette */}
+      {/* Search Modal */}
       {searchOpen && (
-        <div
-          onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-          style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 80 }}
+        <div onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+          style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)", zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: isMobile ? 20 : 80 }}
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ width: 560, background: "white", borderRadius: 14, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", overflow: "hidden", animation: "fadeIn 0.15s ease" }}
+          <div onClick={(e) => e.stopPropagation()}
+            style={{ width: isMobile ? "calc(100vw - 24px)" : 560, background: "white", borderRadius: 14, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", overflow: "hidden", animation: "fadeIn 0.15s ease" }}
           >
-            {/* Search input */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px", borderBottom: "1px solid #f3f4f6" }}>
               <Search size={16} color="#9ca3af" />
-              <input
-                ref={searchRef}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+              <input ref={searchRef} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search pages, students, actions..."
                 style={{ flex: 1, border: "none", outline: "none", fontSize: 14, color: "#111827", background: "transparent", fontFamily: "inherit" }}
               />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", display: "flex" }}>
-                  <X size={14} />
-                </button>
-              )}
+              {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", display: "flex" }}><X size={14} /></button>}
               <kbd style={{ fontSize: 11, color: "#9ca3af", background: "#f3f4f6", padding: "2px 7px", borderRadius: 5, border: "1px solid #e5e7eb" }}>ESC</kbd>
             </div>
-
-            {/* Results */}
             <div style={{ maxHeight: 420, overflowY: "auto" }}>
               {Object.entries(resultsByType).length === 0 ? (
                 <div style={{ padding: 24, textAlign: "center", color: "#9ca3af", fontSize: 13 }}>No results for "{searchQuery}"</div>
               ) : (
                 Object.entries(resultsByType).map(([type, items]) => (
                   <div key={type}>
-                    <div style={{ padding: "10px 16px 4px", fontSize: 10.5, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                      {typeLabel[type] || type}
-                    </div>
+                    <div style={{ padding: "10px 16px 4px", fontSize: 10.5, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em" }}>{typeLabel[type] || type}</div>
                     {items.map((item, i) => (
-                      <div
-                        key={i}
-                        onClick={() => handleSearchSelect(item)}
+                      <div key={i} onClick={() => { setSearchOpen(false); setSearchQuery(""); onNavigate(item.page); }}
                         style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", cursor: "pointer", transition: "background 0.1s" }}
                         onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#f9fafb"; }}
                         onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "white"; }}
@@ -285,15 +253,16 @@ export default function Topbar() {
                 ))
               )}
             </div>
-
-            <div style={{ padding: "10px 16px", borderTop: "1px solid #f3f4f6", display: "flex", gap: 16 }}>
-              {[["↑↓", "Navigate"], ["↵", "Select"], ["Esc", "Close"]].map(([key, label]) => (
-                <div key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "#9ca3af" }}>
-                  <kbd style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 4, padding: "1px 6px", fontSize: 11, color: "#6b7280" }}>{key}</kbd>
-                  <span>{label}</span>
-                </div>
-              ))}
-            </div>
+            {!isMobile && (
+              <div style={{ padding: "10px 16px", borderTop: "1px solid #f3f4f6", display: "flex", gap: 16 }}>
+                {[["↑↓", "Navigate"], ["↵", "Select"], ["Esc", "Close"]].map(([key, label]) => (
+                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "#9ca3af" }}>
+                    <kbd style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 4, padding: "1px 6px", fontSize: 11, color: "#6b7280" }}>{key}</kbd>
+                    <span>{label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

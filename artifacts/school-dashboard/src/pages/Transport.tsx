@@ -1,8 +1,7 @@
 import { useState } from "react";
-import {
-  Plus, Settings, ChevronDown, ChevronRight, MoreVertical,
-  AlertCircle, Clock, Users, MapPin, Zap, Bell,
-} from "lucide-react";
+import { Plus, Settings, ChevronDown, ChevronRight, MoreVertical, AlertCircle, Clock, Users, MapPin, Zap, Bell, X, Phone, Navigation } from "lucide-react";
+import { useApp } from "../context/AppContext";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 const kpiCards = [
   { label: "Active Buses", value: "12 / 15", sub: "In operation", icon: "🚌", iconBg: "#dbeafe", color: "#2563eb" },
@@ -10,15 +9,15 @@ const kpiCards = [
   { label: "On Trip (Now)", value: "8", sub: "Buses on the road", icon: "🚐", iconBg: "#fef3c7", color: "#d97706" },
   { label: "Completed Trips", value: "18", sub: "Today", icon: "✅", iconBg: "#dcfce7", color: "#16a34a" },
   { label: "Pending Pickups", value: "23", sub: "Students", icon: "⏳", iconBg: "#fee2e2", color: "#dc2626" },
-  { label: "Alerts", value: "3", sub: "Requires attention", icon: "🔔", iconBg: "#ffe4e6", color: "#dc2626" },
+  { label: "Alerts", value: "3", sub: "Need attention", icon: "🔔", iconBg: "#ffe4e6", color: "#dc2626" },
 ];
 
 const buses = [
-  { id: "BUS 01 - KAS 123-21", driver: "Kofi Adjei", route: "Route A", status: "On Trip", location: "Near A&C Mall", nextStop: "North Legon", eta: "8 min", students: 38 },
-  { id: "BUS 03 - KAS 456-21", driver: "Madina Zongo", route: "Route B", status: "On Trip", location: "Atomic Junction", nextStop: "Madina Zongo", eta: "12 min", students: 41 },
-  { id: "BUS 05 - KAS 789-21", driver: "Abdul Rahman", route: "Route C", status: "On Trip", location: "Haatso Overpass", nextStop: "Haatso", eta: "6 min", students: 35 },
-  { id: "BUS 07 - KAS 321-21", driver: "Ama Tetseh", route: "Route D", status: "Delayed", location: "Ashongman Estate", nextStop: "Ashongman", eta: "15 min", students: 37 },
-  { id: "BUS 09 - KAS 664-21", driver: "Yaw Mensah", route: "Route E", status: "On Trip", location: "Sowutuom Last Stop", nextStop: "Sowutuom", eta: "9 min", students: 34 },
+  { id: "BUS 01 - KAS 123-21", driver: "Kofi Adjei", route: "Route A", status: "On Trip", location: "Near A&C Mall", nextStop: "North Legon", eta: "8 min", students: 38, phone: "0244001001" },
+  { id: "BUS 03 - KAS 456-21", driver: "Madina Zongo", route: "Route B", status: "On Trip", location: "Atomic Junction", nextStop: "Madina Zongo", eta: "12 min", students: 41, phone: "0244001002" },
+  { id: "BUS 05 - KAS 789-21", driver: "Abdul Rahman", route: "Route C", status: "On Trip", location: "Haatso Overpass", nextStop: "Haatso", eta: "6 min", students: 35, phone: "0244001003" },
+  { id: "BUS 07 - KAS 321-21", driver: "Ama Tetseh", route: "Route D", status: "Delayed", location: "Ashongman Estate", nextStop: "Ashongman", eta: "15 min", students: 37, phone: "0244001004" },
+  { id: "BUS 09 - KAS 664-21", driver: "Yaw Mensah", route: "Route E", status: "On Trip", location: "Sowutuom Last Stop", nextStop: "Sowutuom", eta: "9 min", students: 34, phone: "0244001005" },
 ];
 
 const pendingPickups = [
@@ -26,7 +25,6 @@ const pendingPickups = [
   { name: "Kwame Asare", route: "Route C - Haatso", time: "Pickup: 8:10 AM", status: "Waiting", initials: "KA", avatarBg: "#bfdbfe", avatarColor: "#1e3a8a" },
   { name: "Akosua Prempah", route: "Route A - Ashaley Botwe", time: "Pickup: 8:15 AM", status: "Waiting", initials: "AP", avatarBg: "#fce7f3", avatarColor: "#9d174d" },
   { name: "Yaw Antwi", route: "Route D - Sowutuom", time: "Pickup: 8:20 AM", status: "Waiting", initials: "YA", avatarBg: "#fef9c3", avatarColor: "#713f12" },
-  { name: "Nana Yaw Addo", route: "Route D - Ashongman", time: "Pickup: 8:25 AM", status: "Waiting", initials: "NY", avatarBg: "#bfdbfe", avatarColor: "#1e3a8a" },
 ];
 
 const driversOnDuty = [
@@ -35,7 +33,12 @@ const driversOnDuty = [
   { name: "Abdul Rahman", route: "Bus 05 - Route C", initials: "AR", avatarBg: "#e0e7ff", avatarColor: "#3730a3" },
   { name: "Ada Tetseh", route: "Bus 07 - Route D", initials: "AT", avatarBg: "#fce7f3", avatarColor: "#9d174d" },
   { name: "Yaw Mensah", route: "Bus 09 - Route E", initials: "YM", avatarBg: "#fef9c3", avatarColor: "#713f12" },
-  { name: "Grace Mensah", route: "Bus 11 - Route F", initials: "GM", avatarBg: "#fce7f3", avatarColor: "#9d174d" },
+];
+
+const initAlerts = [
+  { id: 1, icon: "⚠️", title: "Bus 07 is 12 minutes delayed", sub: "Route D – Ashongman Estate", time: "9:20 AM", severity: "warning" },
+  { id: 2, icon: "🔔", title: "5 students not picked up yet", sub: "Route B – Madina Zongo area", time: "9:00 AM", severity: "warning" },
+  { id: 3, icon: "✅", title: "Bus 01 completed Route A", sub: "All 38 students delivered", time: "8:45 AM", severity: "success" },
 ];
 
 const statusStyle = (s: string) => {
@@ -46,39 +49,112 @@ const statusStyle = (s: string) => {
 };
 
 export default function Transport() {
+  const { showToast } = useApp();
+  const { isMobile, isTablet } = useWindowSize();
+
   const [activeTab, setActiveTab] = useState("Live Tracking");
-  const tabs = ["Live Tracking", "Routes", "Drivers", "Students", "Vehicles", "Trips", "Fuel & Maintenance", "Reports"];
+  const [selectedBus, setSelectedBus] = useState(buses[0]);
+  const [showPanel, setShowPanel] = useState(false);
+  const [trackingBus, setTrackingBus] = useState<typeof buses[0] | null>(null);
+  const [alerts, setAlerts] = useState(initAlerts);
+
+  const tabs = isMobile
+    ? ["Live Tracking", "Routes", "Drivers", "Alerts"]
+    : ["Live Tracking", "Routes", "Drivers", "Students", "Vehicles", "Trips", "Fuel & Maintenance", "Reports"];
+
+  const kpiCols = isMobile ? "repeat(3, 1fr)" : isTablet ? "repeat(3, 1fr)" : "repeat(6, 1fr)";
+
+  const handleTrack = (bus: typeof buses[0]) => {
+    setTrackingBus(bus);
+    showToast(`Live tracking: ${bus.id} – ${bus.location}`, "info");
+  };
+
+  const handleCallDriver = (bus: typeof buses[0]) => {
+    showToast(`Calling driver ${bus.driver} (${bus.phone})...`, "info");
+  };
+
+  const dismissAlert = (id: number) => {
+    setAlerts((prev) => prev.filter((a) => a.id !== id));
+    showToast("Alert dismissed", "info");
+  };
+
+  const BusPanel = ({ bus }: { bus: typeof buses[0] }) => (
+    <div style={{ padding: "14px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{bus.id}</div>
+          <div style={{ fontSize: 11, color: "#9ca3af" }}>{bus.route}</div>
+          <span style={{ display: "inline-block", marginTop: 4, fontSize: 10.5, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: statusStyle(bus.status).bg, color: statusStyle(bus.status).color }}>{bus.status}</span>
+        </div>
+        {isMobile && <button onClick={() => setShowPanel(false)} style={{ background: "none", border: "none", cursor: "pointer" }}><X size={16} /></button>}
+      </div>
+
+      {[["Driver", bus.driver], ["Current Location", bus.location], ["Next Stop", bus.nextStop], ["ETA", bus.eta], ["Students on Board", String(bus.students)]].map(([k, v]) => (
+        <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #f9fafb" }}>
+          <span style={{ fontSize: 11.5, color: "#9ca3af" }}>{k}</span>
+          <span style={{ fontSize: 11.5, color: "#374151", fontWeight: 500 }}>{v}</span>
+        </div>
+      ))}
+
+      {/* Simulated Map */}
+      <div style={{ marginTop: 14, marginBottom: 14, background: "linear-gradient(135deg, #e0e7ff, #ede9fe)", borderRadius: 10, height: 120, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}>
+        <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Navigation size={20} color="white" />
+        </div>
+        <span style={{ fontSize: 11.5, fontWeight: 600, color: "#7c3aed" }}>{bus.location}</span>
+        <span style={{ fontSize: 10.5, color: "#9ca3af" }}>Live tracking active</span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <button onClick={() => { handleTrack(bus); if (isMobile) setShowPanel(false); }} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "none", background: "linear-gradient(135deg,#1e1b4b,#3730a3)", color: "white", fontSize: 12.5, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          📡 Track Live
+        </button>
+        <button onClick={() => { handleCallDriver(bus); if (isMobile) setShowPanel(false); }} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #e5e7eb", background: "white", color: "#374151", fontSize: 12.5, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          <Phone size={13} /> Call Driver
+        </button>
+        {bus.status === "Delayed" && (
+          <button onClick={() => { showToast(`Delay alert sent to parents on ${bus.route}`, "info"); if (isMobile) setShowPanel(false); }} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "none", background: "#fee2e2", color: "#dc2626", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
+            🔔 Alert Parents of Delay
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
-    <div style={{ display: "flex", gap: 16, height: "calc(100vh - 96px)" }}>
+    <div style={{ display: "flex", gap: 16, flexDirection: isMobile ? "column" : "row", height: isMobile ? "auto" : "calc(100vh - 96px)" }}>
       {/* Main */}
-      <div style={{ flex: 1, minWidth: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: isMobile ? "visible" : "auto", display: "flex", flexDirection: "column", gap: 14 }}>
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: isMobile ? "center" : "flex-start", gap: 10 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#111827", margin: 0 }}>Transport Management</h1>
-            <p style={{ fontSize: 12.5, color: "#6b7280", margin: "4px 0 0" }}>Manage school buses, routes, students and real-time tracking.</p>
+            <h1 style={{ fontSize: isMobile ? 19 : 22, fontWeight: 700, color: "#111827", margin: 0 }}>Transport</h1>
+            {!isMobile && <p style={{ fontSize: 12.5, color: "#6b7280", margin: "4px 0 0" }}>Manage buses, routes, students and live tracking.</p>}
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "none", borderRadius: 8, background: "#1e1b4b", cursor: "pointer", fontSize: 12.5, fontWeight: 600, color: "white" }}>
-              📡 Live Tracking
-            </button>
-            <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
-              <Settings size={13} color="#6b7280" /> Transport Settings
-            </button>
-            <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#7c3aed,#6d28d9)", cursor: "pointer", fontSize: 12.5, fontWeight: 600, color: "white" }}>
-              <Plus size={14} /> Add Vehicle
+            {!isMobile && (
+              <>
+                <button onClick={() => showToast("Opening live tracking view...", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "none", borderRadius: 8, background: "#1e1b4b", cursor: "pointer", fontSize: 12.5, fontWeight: 600, color: "white" }}>
+                  📡 Live Tracking
+                </button>
+                <button onClick={() => showToast("Opening transport settings...", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                  <Settings size={13} color="#6b7280" /> Settings
+                </button>
+              </>
+            )}
+            <button onClick={() => showToast("Add vehicle form opening...", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 14px", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#7c3aed,#6d28d9)", cursor: "pointer", fontSize: 12.5, fontWeight: 600, color: "white" }}>
+              <Plus size={13} />{!isMobile && " Add Vehicle"}
             </button>
           </div>
         </div>
 
         {/* KPI Cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 10 }}>
+        <div style={{ display: "grid", gridTemplateColumns: kpiCols, gap: 10 }}>
           {kpiCards.map((k) => (
             <div key={k.label} style={{ background: "white", borderRadius: 12, padding: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: k.iconBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, marginBottom: 6 }}>{k.icon}</div>
+              <div style={{ width: 34, height: 34, borderRadius: 9, background: k.iconBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, marginBottom: 6 }}>{k.icon}</div>
               <div style={{ fontSize: 10, color: "#6b7280", marginBottom: 2, fontWeight: 500 }}>{k.label}</div>
-              <div style={{ fontSize: 17, fontWeight: 700, color: "#111827" }}>{k.value}</div>
+              <div style={{ fontSize: isMobile ? 15 : 18, fontWeight: 700, color: "#111827" }}>{k.value}</div>
               <div style={{ fontSize: 10.5, color: k.color, fontWeight: 500 }}>{k.sub}</div>
             </div>
           ))}
@@ -87,270 +163,258 @@ export default function Transport() {
         {/* Tabs */}
         <div style={{ display: "flex", background: "white", borderRadius: 10, padding: "4px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6", gap: 2, overflowX: "auto" }}>
           {tabs.map((t) => (
-            <button key={t} onClick={() => setActiveTab(t)}
-              style={{ padding: "7px 10px", fontSize: 11.5, fontWeight: activeTab === t ? 600 : 400, color: activeTab === t ? "white" : "#6b7280", background: activeTab === t ? "#7c3aed" : "transparent", border: "none", borderRadius: 7, cursor: "pointer", whiteSpace: "nowrap" }}>{t}</button>
+            <button key={t} onClick={() => setActiveTab(t)} style={{ flex: 1, padding: "7px 6px", fontSize: isMobile ? 11 : 11.5, fontWeight: activeTab === t ? 600 : 400, color: activeTab === t ? "white" : "#6b7280", background: activeTab === t ? "#7c3aed" : "transparent", border: "none", borderRadius: 7, cursor: "pointer", whiteSpace: "nowrap", minWidth: "fit-content" }}>{t}</button>
           ))}
         </div>
 
-        {/* Live Map */}
-        <div style={{ background: "white", borderRadius: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6", overflow: "hidden" }}>
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid #f3f4f6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>Live Bus Tracking</span>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 8, background: "#fee2e2", color: "#dc2626" }}>🔴 LIVE</span>
-              </div>
-              <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 1 }}>Real-time location of all active buses</div>
+        {/* Map Placeholder */}
+        <div style={{ background: "linear-gradient(135deg, #0f172a, #1e1b4b)", borderRadius: 12, overflow: "hidden", position: "relative", height: isMobile ? 180 : 220 }}>
+          {/* Simulated map dots */}
+          {[
+            { x: "25%", y: "40%", label: "Bus 01", color: "#22c55e" },
+            { x: "50%", y: "55%", label: "Bus 03", color: "#22c55e" },
+            { x: "70%", y: "30%", label: "Bus 05", color: "#22c55e" },
+            { x: "35%", y: "70%", label: "Bus 07", color: "#ef4444" },
+            { x: "80%", y: "60%", label: "Bus 09", color: "#22c55e" },
+          ].map((dot, i) => (
+            <div key={i} style={{ position: "absolute", left: dot.x, top: dot.y, transform: "translate(-50%, -50%)" }}>
+              <div style={{ width: 12, height: 12, borderRadius: "50%", background: dot.color, boxShadow: `0 0 0 3px ${dot.color}40` }} />
+              <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", fontSize: 9, color: "white", background: "rgba(0,0,0,0.6)", padding: "1px 5px", borderRadius: 4, whiteSpace: "nowrap" }}>{dot.label}</div>
+            </div>
+          ))}
+          {/* Map grid lines */}
+          <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.08 }}>
+            {[20, 40, 60, 80].map((pct) => (
+              <g key={pct}>
+                <line x1="0" y1={`${pct}%`} x2="100%" y2={`${pct}%`} stroke="white" strokeWidth="0.5" />
+                <line x1={`${pct}%`} y1="0" x2={`${pct}%`} y2="100%" stroke="white" strokeWidth="0.5" />
+              </g>
+            ))}
+          </svg>
+          <div style={{ position: "absolute", top: 12, left: 14, color: "white" }}>
+            <div style={{ fontSize: 12, fontWeight: 700 }}>📡 Live Fleet Map</div>
+            <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.7)" }}>8 buses active · Updated 30s ago</div>
+          </div>
+          <div style={{ position: "absolute", top: 12, right: 14, display: "flex", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
+              <span style={{ fontSize: 10.5, color: "white" }}>On Trip</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444" }} />
+              <span style={{ fontSize: 10.5, color: "white" }}>Delayed</span>
             </div>
           </div>
-
-          {/* Map placeholder */}
-          <div style={{ position: "relative", height: 220, background: "linear-gradient(135deg, #e8f4f8 0%, #d4e9f0 30%, #c8e3ec 60%, #d8eef5 100%)", overflow: "hidden" }}>
-            {/* Road lines */}
-            <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-              <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="#b8d4dc" strokeWidth="3" />
-              <line x1="50%" y1="5%" x2="50%" y2="95%" stroke="#b8d4dc" strokeWidth="3" />
-              <line x1="20%" y1="10%" x2="80%" y2="90%" stroke="#c0d8e0" strokeWidth="2" />
-              <line x1="80%" y1="10%" x2="20%" y2="90%" stroke="#c0d8e0" strokeWidth="2" />
-              <line x1="5%" y1="25%" x2="95%" y2="75%" stroke="#ccdfe7" strokeWidth="1.5" />
-              <line x1="5%" y1="75%" x2="95%" y2="25%" stroke="#ccdfe7" strokeWidth="1.5" />
-              {/* Route line (blue) */}
-              <polyline points="80,110 200,60 320,80 450,50 530,90" stroke="#3b82f6" strokeWidth="2.5" fill="none" strokeDasharray="6,3" />
-            </svg>
-
-            {/* Place labels */}
-            {[
-              { x: "18%", y: "20%", label: "North Legon" },
-              { x: "55%", y: "15%", label: "Madina" },
-              { x: "75%", y: "55%", label: "Haatso" },
-              { x: "15%", y: "65%", label: "Atomic Junction" },
-              { x: "40%", y: "72%", label: "Sowutuom" },
-              { x: "65%", y: "80%", label: "Accra Mall" },
-              { x: "30%", y: "38%", label: "ABC Mall" },
-            ].map((p, i) => (
-              <div key={i} style={{ position: "absolute", left: p.x, top: p.y, fontSize: 10, color: "#374151", fontWeight: 600, background: "rgba(255,255,255,0.8)", padding: "2px 5px", borderRadius: 4, whiteSpace: "nowrap" }}>{p.label}</div>
-            ))}
-
-            {/* Bus icons */}
-            {[
-              { x: "22%", y: "35%", color: "#16a34a" },
-              { x: "42%", y: "22%", color: "#16a34a" },
-              { x: "58%", y: "42%", color: "#d97706" },
-              { x: "70%", y: "30%", color: "#16a34a" },
-              { x: "34%", y: "58%", color: "#16a34a" },
-            ].map((b, i) => (
-              <div key={i} style={{ position: "absolute", left: b.x, top: b.y, width: 26, height: 26, borderRadius: "50%", background: b.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, boxShadow: "0 2px 6px rgba(0,0,0,0.2)", border: "2px solid white" }}>
-                🚌
-              </div>
-            ))}
-
-            {/* Legend */}
-            <div style={{ position: "absolute", right: 16, top: 16, background: "rgba(255,255,255,0.95)", borderRadius: 8, padding: "10px", boxShadow: "0 1px 4px rgba(0,0,0,0.1)", fontSize: 11 }}>
-              {[
-                { color: "#16a34a", label: "On Trip", count: 8 },
-                { color: "#2563eb", label: "Completed", count: 18 },
-                { color: "#d97706", label: "Waiting", count: 2 },
-                { color: "#dc2626", label: "Delayed", count: 1 },
-                { color: "#6b7280", label: "Offline", count: 1 },
-              ].map((l) => (
-                <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: l.color }} />
-                  <span style={{ color: "#374151" }}>{l.label}</span>
-                  <span style={{ fontWeight: 700, color: "#111827", marginLeft: "auto" }}>{l.count}</span>
-                </div>
-              ))}
-              <button style={{ marginTop: 4, fontSize: 11, color: "#7c3aed", background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: 3 }}>
-                ⤢ Expand Map
-              </button>
-            </div>
-          </div>
+          <button onClick={() => showToast("Opening full-screen tracking map...", "info")} style={{ position: "absolute", bottom: 12, right: 14, padding: "6px 12px", border: "none", borderRadius: 8, background: "rgba(255,255,255,0.15)", color: "white", fontSize: 11.5, fontWeight: 600, cursor: "pointer", backdropFilter: "blur(4px)" }}>
+            Expand Map ↗
+          </button>
         </div>
 
-        {/* Active Buses Table */}
+        {/* Buses Table */}
         <div style={{ background: "white", borderRadius: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6", overflow: "hidden" }}>
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid #f3f4f6", display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>Active Buses <span style={{ color: "#9ca3af", fontWeight: 400, fontSize: 12 }}>(8 on trip)</span></span>
+          <div style={{ padding: "12px 14px", borderBottom: "1px solid #f3f4f6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>Active Buses</span>
+            <div style={{ display: "flex", gap: 6 }}>
+              <span style={{ fontSize: 11.5, color: "#16a34a", fontWeight: 600, background: "#f0fdf4", padding: "3px 8px", borderRadius: 20 }}>● 8 On Trip</span>
+              <span style={{ fontSize: 11.5, color: "#dc2626", fontWeight: 600, background: "#fff5f5", padding: "3px 8px", borderRadius: 20 }}>● 1 Delayed</span>
+            </div>
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#f9fafb" }}>
-                {["BUS / DRIVER", "ROUTE", "STATUS", "CURRENT LOCATION", "NEXT STOP", "ETA", "STUDENTS", "ACTION"].map((c) => (
-                  <th key={c} style={{ padding: "10px 12px", fontSize: 10.5, fontWeight: 700, color: "#9ca3af", textAlign: "left", whiteSpace: "nowrap" }}>{c}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {buses.map((b, idx) => {
-                const st = statusStyle(b.status);
+
+          {/* Mobile card list */}
+          {isMobile ? (
+            <div style={{ padding: "10px 12px" }}>
+              {buses.map((bus) => {
+                const st = statusStyle(bus.status);
                 return (
-                  <tr key={b.id} style={{ borderBottom: idx < buses.length - 1 ? "1px solid #f9fafb" : "none" }}>
-                    <td style={{ padding: "10px 12px" }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{b.id}</div>
-                      <div style={{ fontSize: 11, color: "#9ca3af" }}>Driver: {b.driver}</div>
-                    </td>
-                    <td style={{ padding: "10px 12px", fontSize: 12, color: "#374151", fontWeight: 500 }}>{b.route}</td>
-                    <td style={{ padding: "10px 12px" }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 12, background: st.bg, color: st.color }}>{b.status}</span>
-                    </td>
-                    <td style={{ padding: "10px 12px", fontSize: 12, color: "#374151" }}>{b.location}</td>
-                    <td style={{ padding: "10px 12px", fontSize: 12, color: "#374151" }}>{b.nextStop}</td>
-                    <td style={{ padding: "10px 12px", fontSize: 12, fontWeight: 600, color: b.status === "Delayed" ? "#dc2626" : "#374151" }}>{b.eta}</td>
-                    <td style={{ padding: "10px 12px", fontSize: 12, color: "#374151" }}>{b.students}</td>
-                    <td style={{ padding: "10px 12px" }}>
-                      <button style={{ padding: "5px 12px", border: "1px solid #e5e7eb", borderRadius: 6, background: "white", fontSize: 11.5, cursor: "pointer", color: "#374151", fontWeight: 500 }}>Track</button>
-                    </td>
-                  </tr>
+                  <div key={bus.id} onClick={() => { setSelectedBus(bus); setShowPanel(true); }}
+                    style={{ background: selectedBus.id === bus.id ? "#faf5ff" : "white", border: `1px solid ${selectedBus.id === bus.id ? "#ede9fe" : "#f3f4f6"}`, borderRadius: 10, padding: "12px", marginBottom: 8, cursor: "pointer" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{bus.id}</div>
+                        <div style={{ fontSize: 11.5, color: "#9ca3af" }}>{bus.route} · {bus.driver}</div>
+                      </div>
+                      <span style={{ fontSize: 10.5, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: st.bg, color: st.color }}>{bus.status}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <div style={{ fontSize: 11.5, color: "#6b7280" }}>{bus.location}</div>
+                        <div style={{ fontSize: 11, color: "#9ca3af" }}>Next: {bus.nextStop} · ETA {bus.eta}</div>
+                      </div>
+                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 4, background: "#f9fafb", padding: "4px 8px", borderRadius: 20 }}>
+                          <Users size={11} color="#6b7280" />
+                          <span style={{ fontSize: 11.5, color: "#374151", fontWeight: 600 }}>{bus.students}</span>
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); handleTrack(bus); }} style={{ padding: "5px 10px", border: "none", borderRadius: 7, background: "#1e1b4b", color: "white", fontSize: 11, fontWeight: 600, cursor: "pointer" }}>Track</button>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
-          <div style={{ padding: "10px 16px", borderTop: "1px solid #f3f4f6" }}>
-            <button style={{ fontSize: 12, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View all buses →</button>
-          </div>
-        </div>
-
-        {/* Transport Overview */}
-        <div style={{ background: "white", borderRadius: 12, padding: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginBottom: 12 }}>Transport Overview (This Month)</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 10 }}>
-            {[
-              { label: "Total Trips", value: "487", icon: "🚌" },
-              { label: "Total Distance", value: "12,842 km", icon: "📍" },
-              { label: "Fuel Consumed", value: "1,245 L", icon: "⛽" },
-              { label: "Total Cost", value: "GHS 18,560", icon: "💰" },
-              { label: "Avg. Cost / Trip", value: "GHS 38.10", icon: "📊" },
-              { label: "Safety First", value: "No accidents", icon: "🛡️" },
-            ].map((s) => (
-              <div key={s.label} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 22, marginBottom: 3 }}>{s.icon}</div>
-                <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{s.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Panel */}
-      <div style={{ width: 268, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12, overflowY: "auto" }}>
-        {/* Trip Summary */}
-        <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}>Today's Trip Summary</span>
-            <button style={{ fontSize: 11.5, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View Report</button>
-          </div>
-          <div style={{ display: "flex", gap: 12 }}>
-            {[
-              { label: "Total Trips", value: "26" },
-              { label: "Completed", value: "18 (69.2%)", color: "#16a34a" },
-              { label: "On Trip", value: "8 (30.8%)", color: "#d97706" },
-            ].map((s) => (
-              <div key={s.label} style={{ flex: 1, textAlign: "center", background: "#f9fafb", borderRadius: 8, padding: "8px" }}>
-                <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 3 }}>{s.label}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: s.color || "#111827" }}>{s.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Pending Pickups */}
-        <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}>Pending Pickups</span>
-            <button style={{ fontSize: 11.5, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View All</button>
-          </div>
-          {pendingPickups.map((p) => (
-            <div key={p.name} style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
-              <div style={{ width: 30, height: 30, borderRadius: "50%", background: p.avatarBg, color: p.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, flexShrink: 0 }}>{p.initials}</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{p.name}</div>
-                <div style={{ fontSize: 10.5, color: "#9ca3af", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.route}</div>
-                <div style={{ fontSize: 10.5, color: "#6b7280" }}>{p.time}</div>
-              </div>
-              <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 10, background: "#fef3c7", color: "#d97706", whiteSpace: "nowrap" }}>{p.status}</span>
             </div>
-          ))}
-          <button style={{ fontSize: 12, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View all pending →</button>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "#f9fafb", borderBottom: "1px solid #f3f4f6" }}>
+                    {["BUS ID", "DRIVER", "ROUTE", "STATUS", "CURRENT LOCATION", "NEXT STOP", "ETA", "STUDENTS", "ACTIONS"].map((c) => (
+                      <th key={c} style={{ padding: "10px 12px", fontSize: 10.5, fontWeight: 700, color: "#9ca3af", textAlign: "left", whiteSpace: "nowrap", letterSpacing: "0.05em" }}>{c}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {buses.map((bus, idx) => {
+                    const st = statusStyle(bus.status);
+                    return (
+                      <tr key={bus.id} onClick={() => setSelectedBus(bus)}
+                        style={{ borderBottom: idx < buses.length - 1 ? "1px solid #f9fafb" : "none", background: selectedBus.id === bus.id ? "#faf5ff" : "white", cursor: "pointer", transition: "background 0.1s" }}>
+                        <td style={{ padding: "11px 12px" }}><span style={{ fontSize: 12, fontWeight: 700, color: "#111827" }}>{bus.id}</span></td>
+                        <td style={{ padding: "11px 12px" }}><span style={{ fontSize: 12.5, color: "#374151" }}>{bus.driver}</span></td>
+                        <td style={{ padding: "11px 12px" }}><span style={{ fontSize: 12, color: "#7c3aed", fontWeight: 500 }}>{bus.route}</span></td>
+                        <td style={{ padding: "11px 12px" }}><span style={{ fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 20, background: st.bg, color: st.color }}>{bus.status}</span></td>
+                        <td style={{ padding: "11px 12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                            <MapPin size={12} color="#7c3aed" />
+                            <span style={{ fontSize: 12, color: "#374151" }}>{bus.location}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: "11px 12px" }}><span style={{ fontSize: 12, color: "#374151" }}>{bus.nextStop}</span></td>
+                        <td style={{ padding: "11px 12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            <Clock size={11} color="#9ca3af" />
+                            <span style={{ fontSize: 12, color: bus.status === "Delayed" ? "#dc2626" : "#374151", fontWeight: bus.status === "Delayed" ? 600 : 400 }}>{bus.eta}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: "11px 12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            <Users size={12} color="#6b7280" />
+                            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#374151" }}>{bus.students}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: "11px 12px" }}>
+                          <div style={{ display: "flex", gap: 5 }}>
+                            <button onClick={(e) => { e.stopPropagation(); handleTrack(bus); }} style={{ padding: "5px 10px", border: "none", borderRadius: 7, background: "#1e1b4b", color: "white", fontSize: 11, fontWeight: 600, cursor: "pointer" }}>📡 Track</button>
+                            <button onClick={(e) => { e.stopPropagation(); handleCallDriver(bus); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4, borderRadius: 5, display: "flex" }}><MoreVertical size={14} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
-        {/* Driver on Duty */}
-        <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}>Driver on Duty</span>
-            <button style={{ fontSize: 11.5, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View All</button>
+        {/* Bottom row */}
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 14 }}>
+          {/* Alerts */}
+          <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <Bell size={14} color="#dc2626" />
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: "#111827" }}>Alerts</span>
+                {alerts.length > 0 && <span style={{ fontSize: 10.5, fontWeight: 600, background: "#fee2e2", color: "#dc2626", padding: "1px 6px", borderRadius: 10 }}>{alerts.length}</span>}
+              </div>
+            </div>
+            {alerts.map((a) => (
+              <div key={a.id} style={{ display: "flex", gap: 8, padding: "8px", background: a.severity === "warning" ? "#fff8f0" : "#f0fdf4", borderRadius: 8, marginBottom: 7, alignItems: "flex-start" }}>
+                <span style={{ fontSize: 16 }}>{a.icon}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 11.5, fontWeight: 600, color: "#374151" }}>{a.title}</div>
+                  <div style={{ fontSize: 10.5, color: "#9ca3af" }}>{a.sub}</div>
+                </div>
+                <button onClick={() => dismissAlert(a.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", flexShrink: 0, display: "flex" }}><X size={12} /></button>
+              </div>
+            ))}
+            {alerts.length === 0 && <div style={{ textAlign: "center", padding: "16px 0", color: "#9ca3af", fontSize: 12 }}>All clear! No alerts.</div>}
           </div>
-          {driversOnDuty.map((d) => (
-            <div key={d.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <div style={{ width: 28, height: 28, borderRadius: "50%", background: d.avatarBg, color: d.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700 }}>{d.initials}</div>
-                <div>
+
+          {/* Pending Pickups */}
+          <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: "#111827" }}>Pending Pickups</span>
+              <span style={{ fontSize: 11.5, fontWeight: 600, color: "#dc2626" }}>{pendingPickups.length} waiting</span>
+            </div>
+            {pendingPickups.map((p, idx) => (
+              <div key={idx} style={{ display: "flex", gap: 9, marginBottom: 8, alignItems: "center" }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: p.avatarBg, color: p.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>{p.initials}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                  <div style={{ fontSize: 10.5, color: "#9ca3af", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.route}</div>
+                </div>
+                <button onClick={() => showToast(`${p.name} marked as picked up`, "success")} style={{ padding: "4px 8px", border: "none", borderRadius: 6, background: "#dcfce7", color: "#16a34a", fontSize: 10.5, fontWeight: 600, cursor: "pointer" }}>Mark</button>
+              </div>
+            ))}
+          </div>
+
+          {/* Drivers on Duty */}
+          <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
+            <div style={{ fontSize: 12.5, fontWeight: 700, color: "#111827", marginBottom: 10 }}>Drivers on Duty</div>
+            {driversOnDuty.map((d, idx) => (
+              <div key={idx} style={{ display: "flex", gap: 9, marginBottom: 8, alignItems: "center" }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: d.avatarBg, color: d.avatarColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, flexShrink: 0 }}>{d.initials}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{d.name}</div>
                   <div style={{ fontSize: 10.5, color: "#9ca3af" }}>{d.route}</div>
                 </div>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", flexShrink: 0 }} />
               </div>
-              <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 10, background: "#dcfce7", color: "#16a34a" }}>On Duty</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Alerts */}
-        <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}>Alerts & Notifications</span>
-            <button style={{ fontSize: 11.5, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View All</button>
-          </div>
-          {[
-            { icon: "🚌", text: "Bus 07 Delay – Route D is 12 mins delayed", time: "8:07 AM", color: "#dc2626", bg: "#fee2e2" },
-            { icon: "🔧", text: "Maintenance Due – Bus 03 - Oil change due in 3 days", time: "Yesterday", color: "#d97706", bg: "#fef3c7" },
-            { icon: "⛽", text: "Low Fuel – Bus 09 fuel level is low (19%)", time: "Yesterday", color: "#d97706", bg: "#fef3c7" },
-          ].map((a, i) => (
-            <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 8, background: a.bg, padding: "8px", borderRadius: 7 }}>
-              <span style={{ fontSize: 16 }}>{a.icon}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11.5, color: a.color, fontWeight: 600, lineHeight: 1.4 }}>{a.text}</div>
-                <div style={{ fontSize: 10.5, color: "#9ca3af", marginTop: 2 }}>{a.time}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Quick Actions */}
-        <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "#111827", marginBottom: 10 }}>Quick Actions</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            {[
-              { icon: "➕", label: "Add Trip" }, { icon: "👥", label: "Bulk Assign Students" },
-              { icon: "🔔", label: "Send Alert to Parents" }, { icon: "📊", label: "Transport Report" },
-            ].map((a) => (
-              <button key={a.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, padding: "10px 6px", border: "1px solid #f3f4f6", borderRadius: 8, background: "#fafafa", cursor: "pointer" }}>
-                <span style={{ fontSize: 18 }}>{a.icon}</span>
-                <span style={{ fontSize: 10.5, color: "#374151", textAlign: "center", lineHeight: 1.3 }}>{a.label}</span>
-              </button>
             ))}
           </div>
         </div>
-
-        {/* Maintenance */}
-        <div style={{ background: "white", borderRadius: 12, padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}>Maintenance Reminders</span>
-            <button style={{ fontSize: 11.5, color: "#7c3aed", background: "none", border: "none", cursor: "pointer" }}>View All</button>
-          </div>
-          {[
-            { bus: "Bus 02", task: "Brake inspection due", when: "In 2 days", color: "#dc2626" },
-            { bus: "Bus 04", task: "Tire rotation due", when: "In 5 days", color: "#d97706" },
-            { bus: "Bus 10", task: "Insurance expires", when: "In 12 days", color: "#2563eb" },
-          ].map((m) => (
-            <div key={m.bus} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{m.bus}</div>
-                <div style={{ fontSize: 10.5, color: "#9ca3af" }}>{m.task}</div>
-              </div>
-              <span style={{ fontSize: 10.5, fontWeight: 600, color: m.color, background: m.color === "#dc2626" ? "#fee2e2" : m.color === "#d97706" ? "#fef3c7" : "#dbeafe", padding: "2px 8px", borderRadius: 10 }}>{m.when}</span>
-            </div>
-          ))}
-        </div>
       </div>
+
+      {/* Right Panel — Desktop */}
+      {!isMobile && (
+        <div style={{ width: 270, flexShrink: 0, background: "white", borderRadius: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6", display: "flex", flexDirection: "column", overflowY: "auto" }}>
+          <div style={{ padding: "12px 14px", borderBottom: "1px solid #f3f4f6" }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>Bus Details</span>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto" }}>
+            <BusPanel bus={selectedBus} />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile bottom sheet */}
+      {isMobile && showPanel && (
+        <div onClick={() => setShowPanel(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 50 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", bottom: 60, left: 0, right: 0, background: "white", borderRadius: "20px 20px 0 0", maxHeight: "75vh", overflowY: "auto", animation: "slideUp 0.2s ease" }}>
+            <div style={{ width: 36, height: 4, borderRadius: 2, background: "#e5e7eb", margin: "12px auto 0" }} />
+            <BusPanel bus={selectedBus} />
+          </div>
+        </div>
+      )}
+
+      {/* Track Modal */}
+      {trackingBus && (
+        <div onClick={() => setTrackingBus(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "white", borderRadius: 16, padding: "24px", width: 360, animation: "slideUp 0.2s ease" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>📡 Live Tracking</span>
+              <button onClick={() => setTrackingBus(null)} style={{ background: "#f3f4f6", border: "none", borderRadius: "50%", width: 28, height: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={14} /></button>
+            </div>
+            <div style={{ background: "linear-gradient(135deg,#0f172a,#1e1b4b)", borderRadius: 10, padding: "20px", marginBottom: 16, textAlign: "center" }}>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginBottom: 4 }}>{trackingBus.id}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "white", marginBottom: 8 }}>{trackingBus.location}</div>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.1)", padding: "5px 12px", borderRadius: 20 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", animation: "pulse 1.5s infinite" }} />
+                <span style={{ fontSize: 12, color: "white" }}>Live · Updated just now</span>
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+              {[["Next Stop", trackingBus.nextStop], ["ETA", trackingBus.eta], ["Driver", trackingBus.driver], ["Students", String(trackingBus.students)]].map(([k, v]) => (
+                <div key={k} style={{ background: "#f9fafb", borderRadius: 8, padding: "10px" }}>
+                  <div style={{ fontSize: 10.5, color: "#9ca3af" }}>{k}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{v}</div>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => setTrackingBus(null)} style={{ width: "100%", padding: "11px", border: "none", borderRadius: 9, background: "linear-gradient(135deg,#7c3aed,#6d28d9)", color: "white", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
