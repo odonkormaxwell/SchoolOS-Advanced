@@ -1,0 +1,403 @@
+# USER ACCOUNT, AUTHENTICATION & SECURITY MODULE
+
+## Objective
+
+Improve the Edulex user account system so users can securely log in, log out, edit their profiles, change passwords, reset passwords, and optionally enable Two-Factor Authentication.
+
+The current system has issues where users cannot properly log out or edit their profile. This must be fixed immediately.
+
+---
+
+# 1. AUTHENTICATION PAGES
+
+Create or fix the following pages:
+
+## Login Page
+
+Route:
+
+/login
+
+Requirements:
+
+* Email field
+* Password field
+* Remember Me checkbox
+* Forgot Password link
+* Login button
+* Clear error messages
+* Loading state
+* Redirect user based on role after login
+
+Role redirects:
+
+* Super Admin → Super Admin Dashboard
+* Administrator → School Dashboard
+* Teacher → Teacher Dashboard
+* Accountant → Finance Dashboard
+* Admissions Officer → Admissions Dashboard
+* Parent → Parent Portal
+* Student → Student Portal
+
+---
+
+## Register Page
+
+Route:
+
+/register
+
+This should be for new school registration only.
+
+Fields:
+
+* School Name
+* Contact Person Name
+* Email
+* Phone Number
+* Password
+* Confirm Password
+
+After registration:
+
+* Create school account
+* Create first Administrator user
+* Redirect to onboarding/setup wizard
+
+Do not allow students, parents, or staff to self-register in Version 1.
+
+They should be created by the school administrator.
+
+---
+
+## Forgot Password Page
+
+Route:
+
+/forgot-password
+
+Fields:
+
+* Email Address
+
+Action:
+
+* Send password reset link or token
+* Show success message even if email does not exist for security
+
+---
+
+## Reset Password Page
+
+Route:
+
+/reset-password
+
+Fields:
+
+* New Password
+* Confirm Password
+
+Requirements:
+
+* Validate token
+* Expire token after a safe period
+* Show success message
+* Redirect to login
+
+---
+
+# 2. LOGOUT FIX
+
+Fix logout globally.
+
+Requirements:
+
+* Logout button must work from the user dropdown/profile menu
+* Clear authentication token/session
+* Clear user state
+* Redirect to login page
+* Prevent access to protected pages after logout
+* Show success toast: “You have logged out successfully.”
+
+If user presses browser back after logout, protected dashboard pages should not be accessible.
+
+---
+
+# 3. USER PROFILE PAGE
+
+Create:
+
+Account → My Profile
+
+Route:
+
+/profile
+
+Fields:
+
+* Profile Photo
+* Full Name
+* Email Address
+* Phone Number
+* Role
+* School Name
+* Preferred Language, optional
+* Time Zone, optional
+
+Editable fields:
+
+* Profile Photo
+* Full Name
+* Phone Number
+* Preferred Language
+* Time Zone
+
+Read-only fields:
+
+* Email
+* Role
+* School Name
+
+Buttons:
+
+* Edit Profile
+* Save Changes
+* Cancel
+
+Requirements:
+
+* Upload/change profile photo
+* Save profile changes
+* Show success toast
+* Show validation errors
+* Do not allow dead buttons
+
+---
+
+# 4. CHANGE PASSWORD
+
+Create:
+
+Account → Security → Change Password
+
+Fields:
+
+* Current Password
+* New Password
+* Confirm New Password
+
+Requirements:
+
+* Verify current password
+* Validate password strength
+* Confirm password match
+* Save securely
+* Show success message
+* Require user to log in again after password change, optional but recommended
+
+Password rules:
+
+* Minimum 8 characters
+* At least 1 uppercase letter
+* At least 1 lowercase letter
+* At least 1 number
+* At least 1 special character
+
+---
+
+# 5. TWO-FACTOR AUTHENTICATION
+
+Create:
+
+Account → Security → Two-Factor Authentication
+
+Support 2FA for:
+
+* Super Admin
+* School Administrator
+* Accountant
+
+Optional for:
+
+* Teacher
+* Admissions Officer
+* Parent
+* Student
+
+## 2FA Methods
+
+Version 1:
+
+* Email OTP
+
+Future Ready:
+
+* SMS OTP
+* Authenticator App
+* WhatsApp OTP
+
+## 2FA Workflow
+
+When enabled:
+
+1. User enters email and password.
+2. System verifies credentials.
+3. System sends OTP to email.
+4. User enters OTP.
+5. System verifies OTP.
+6. User is logged in.
+
+OTP Rules:
+
+* 6-digit code
+* Expires after 10 minutes
+* Maximum 5 attempts
+* Resend OTP after 60 seconds
+* Log failed attempts
+
+---
+
+# 6. USER DROPDOWN MENU
+
+Fix the user profile dropdown in the top navigation.
+
+Dropdown should include:
+
+* Profile
+* Security
+* Change Password
+* Notification Preferences
+* Logout
+
+Logout must work.
+
+Profile and Security links must open working pages.
+
+---
+
+# 7. SESSION MANAGEMENT
+
+Implement proper session handling.
+
+Requirements:
+
+* Auto logout after inactivity, configurable
+* Remember Me option
+* Refresh user session correctly
+* Protect all dashboard routes
+* Redirect unauthenticated users to login
+* Redirect authenticated users away from login/register pages
+
+Default inactivity timeout:
+
+30 minutes
+
+---
+
+# 8. USER MANAGEMENT
+
+For Administrator:
+
+Create:
+
+Staff → Roles & Permissions
+
+or
+
+Settings → Users & Permissions
+
+Administrator can:
+
+* Create user
+* Edit user
+* Activate/deactivate user
+* Reset user password
+* Assign role
+* Assign permissions
+* View last login
+* View account status
+
+User statuses:
+
+* Active
+* Inactive
+* Suspended
+* Pending
+
+---
+
+# 9. ACCOUNT SECURITY LOGS
+
+Create:
+
+Account → Security Activity
+
+Display:
+
+* Login history
+* Password changes
+* Failed login attempts
+* 2FA enabled/disabled
+* Logout history
+
+Fields:
+
+* Date
+* Activity
+* Device
+* IP Address, if available
+* Status
+
+---
+
+# 10. EMAIL TEMPLATES
+
+Create clean email templates for:
+
+* Welcome Email
+* Password Reset
+* Password Changed
+* 2FA OTP
+* New Login Alert
+
+Use Edulex branding.
+
+---
+
+# 11. ACCESS CONTROL
+
+Ensure users only access pages allowed by their role and permissions.
+
+If user tries to access restricted page:
+
+Show:
+
+“You do not have permission to access this page.”
+
+Do not show broken screens.
+
+---
+
+# 12. TESTING REQUIREMENTS
+
+Before completion, test:
+
+* Login works
+* Logout works
+* Register works
+* Forgot password works
+* Reset password works
+* Profile edit works
+* Profile photo upload works
+* Change password works
+* 2FA enable/disable works
+* OTP verification works
+* Protected routes work
+* Role-based redirects work
+* User dropdown works
+* Inactive users cannot log in
+* Suspended users cannot log in
+* Mobile responsiveness works
+
+The final user account system should feel secure, modern, and production-ready.

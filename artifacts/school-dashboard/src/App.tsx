@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { AppContext, ToastType } from "./context/AppContext";
+import { useAuth } from "./context/AuthContext";
 import { useWindowSize } from "./hooks/useWindowSize";
 import Toast from "./components/Toast";
 import Sidebar, { UserRole } from "./components/Sidebar";
@@ -16,6 +17,12 @@ import QuickActions from "./components/QuickActions";
 import TransportStatus from "./components/TransportStatus";
 import TodaySchedule from "./components/TodaySchedule";
 import EventsCalendar from "./components/EventsCalendar";
+
+// Auth pages
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import TwoFactor from "./pages/TwoFactor";
 
 // V1 sidebar pages
 import AllStudents from "./pages/AllStudents";
@@ -42,6 +49,8 @@ import Reports from "./pages/Reports";
 import AllReports from "./pages/AllReports";
 import Settings from "./pages/Settings";
 import DevCredentials from "./pages/DevCredentials";
+import Profile from "./pages/Profile";
+import Security from "./pages/Security";
 
 // Hidden / legacy pages (kept for compat, not in sidebar)
 import Gradebook from "./pages/Gradebook";
@@ -70,7 +79,7 @@ interface ToastState { id: number; message: string; type: ToastType; }
 
 function DashboardPage() {
   const { isMobile, isTablet } = useWindowSize();
-  const cols3 = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1fr 1fr 320px";
+  const cols3   = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1fr 1fr 320px";
   const cols3eq = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1fr 1fr 1fr";
   return (
     <>
@@ -113,7 +122,6 @@ function ComingSoon({ label }: { label: string }) {
   );
 }
 
-// Route redirects — old paths map to new merged modules
 const redirects: Record<string, string> = {
   "homework":          "assessments",
   "exams":             "assessments",
@@ -133,13 +141,21 @@ const redirects: Record<string, string> = {
   "record-payment":    "finance-dashboard",
 };
 
-export default function App() {
+const roleMap: Record<string, UserRole> = {
+  administrator:      "administrator",
+  teacher:            "teacher",
+  accountant:         "accountant",
+  admissions_officer: "admissions_officer",
+};
+
+function AuthenticatedApp() {
+  const { user } = useAuth();
   const [activePage, setActivePage] = useState("dashboard");
-  const [toasts, setToasts] = useState<ToastState[]>([]);
-  const [userRole] = useState<UserRole>("administrator");
-  const { isMobile, isTablet } = useWindowSize();
+  const [toasts, setToasts]         = useState<ToastState[]>([]);
+  const { isMobile, isTablet }      = useWindowSize();
 
   const sidebarWidth = isMobile ? 0 : isTablet ? 64 : 220;
+  const userRole: UserRole = roleMap[user?.roleKey || ""] || "teacher";
 
   const onNavigate = useCallback((page: string) => {
     setActivePage(redirects[page] ?? page);
@@ -158,6 +174,9 @@ export default function App() {
   const renderPage = () => {
     switch (activePage) {
       case "dashboard":         return <DashboardPage />;
+      // Account
+      case "profile":           return <Profile />;
+      case "security":          return <Security />;
       // Students
       case "all-students":      return <AllStudents />;
       case "admissions":        return <Admissions />;
@@ -187,7 +206,7 @@ export default function App() {
       case "reports":           return <Reports />;
       case "all-reports":       return <AllReports />;
       case "settings":          return <Settings />;
-      // Dev tools (visible only in dev mode)
+      // Dev tools
       case "dev-credentials":   return <DevCredentials />;
       // Legacy hidden pages
       case "health":            return <HealthRecords />;
@@ -217,9 +236,10 @@ export default function App() {
   return (
     <AppContext.Provider value={{ onNavigate, showToast }}>
       <style>{`
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn  { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeIn   { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin     { to { transform: rotate(360deg); } }
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; }
         input, select, textarea, button { font-family: inherit; }
@@ -230,20 +250,11 @@ export default function App() {
 
       <div style={{ display: "flex", minHeight: "100vh", background: "#f4f6fa", fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}>
         {!isMobile && (
-          <Sidebar
-            activePage={activePage}
-            onNavigate={onNavigate}
-            compact={isTablet}
-            userRole={userRole}
-          />
+          <Sidebar activePage={activePage} onNavigate={onNavigate} compact={isTablet} userRole={userRole} />
         )}
         <div style={{ marginLeft: sidebarWidth, flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-          <Topbar />
-          <main style={{
-            marginTop: 56,
-            padding: isMobile ? "14px 12px 80px" : "20px 20px 30px",
-            flex: 1, overflow: "auto", minWidth: 0,
-          }}>
+          <Topbar onNavigate={onNavigate} />
+          <main style={{ marginTop: 56, padding: isMobile ? "14px 12px 80px" : "20px 20px 30px", flex: 1, overflow: "auto", minWidth: 0 }}>
             {renderPage()}
           </main>
         </div>
@@ -255,5 +266,30 @@ export default function App() {
         <Toast key={t.id} message={t.message} type={t.type} onClose={() => removeToast(t.id)} />
       ))}
     </AppContext.Provider>
+  );
+}
+
+export default function App() {
+  const { isAuthenticated, authView } = useAuth();
+
+  if (!isAuthenticated) {
+    if (authView === "register")        return <><GlobalStyles /><Register /></>;
+    if (authView === "forgot-password") return <><GlobalStyles /><ForgotPassword /></>;
+    if (authView === "2fa")             return <><GlobalStyles /><TwoFactor /></>;
+    return <><GlobalStyles /><Login /></>;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+function GlobalStyles() {
+  return (
+    <style>{`
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 0; }
+      input, select, textarea, button { font-family: inherit; }
+    `}</style>
   );
 }
