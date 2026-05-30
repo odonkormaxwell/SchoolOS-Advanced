@@ -3,9 +3,9 @@ import { Users, CalendarCheck, Bus, ArrowRight, X } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 const initialAnnouncements = [
-  { id: 1, title: "PTA Meeting", description: "There will be a PTA meeting this Saturday, 18th May at 10:00am.", time: "2 hours ago", icon: "pta", iconBg: "#ede9fe", iconColor: "#7c3aed" },
-  { id: 2, title: "Mid-Term Exams", description: "Mid-term examinations begin on 27th May, 2024.", time: "1 day ago", icon: "exam", iconBg: "#dbeafe", iconColor: "#2563eb" },
-  { id: 3, title: "Bus Routes Update", description: "Please check the new bus routes effective Monday, 20th May.", time: "2 days ago", icon: "bus", iconBg: "#fef3c7", iconColor: "#d97706" },
+  { id: 1, title: "PTA Meeting",           description: "There will be a PTA meeting this Saturday, 7th June at 10:00am in the main hall.", time: "2 hours ago",  icon: "pta",  iconBg: "#ede9fe", iconColor: "#7c3aed" },
+  { id: 2, title: "End-of-Term Exams",     description: "Term 2 end-of-term examinations begin on 16th June, 2026.",                        time: "1 day ago",   icon: "exam", iconBg: "#dbeafe", iconColor: "#2563eb" },
+  { id: 3, title: "School Fees Deadline",  description: "Kindly clear all outstanding Term 2 fees before 13th June 2026.",                   time: "2 days ago",  icon: "bus",  iconBg: "#fef3c7", iconColor: "#d97706" },
 ];
 
 const iconMap: Record<string, React.ReactNode> = {

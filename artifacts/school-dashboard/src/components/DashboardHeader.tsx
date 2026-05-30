@@ -21,9 +21,9 @@ function getGreeting() {
 }
 
 export default function DashboardHeader() {
-  const [selectedDate, setSelectedDate] = useState(new Date(2024, 4, 15));
+  const [selectedDate, setSelectedDate] = useState(new Date(2026, 4, 30));
   const [calOpen, setCalOpen] = useState(false);
-  const [viewYear, setViewYear] = useState(2024);
+  const [viewYear, setViewYear] = useState(2026);
   const [viewMonth, setViewMonth] = useState(4);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -149,7 +149,7 @@ export default function DashboardHeader() {
 
             <div style={{ marginTop: 10, borderTop: "1px solid #f3f4f6", paddingTop: 8, display: "flex", gap: 6 }}>
               <button
-                onClick={() => { setSelectedDate(new Date(2024, 4, 15)); setViewMonth(4); setViewYear(2024); setCalOpen(false); }}
+                onClick={() => { setSelectedDate(new Date(2026, 4, 30)); setViewMonth(4); setViewYear(2026); setCalOpen(false); }}
                 style={{ flex: 1, padding: "6px", borderRadius: 6, border: "1px solid #e5e7eb", background: "#f9fafb", fontSize: 11.5, color: "#6b7280", cursor: "pointer", fontWeight: 500 }}
               >
                 Today

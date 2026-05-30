@@ -39,6 +39,7 @@ import Email from "./pages/Email";
 import Staff from "./pages/Staff";
 import RolesPermissions from "./pages/RolesPermissions";
 import Reports from "./pages/Reports";
+import AllReports from "./pages/AllReports";
 import Settings from "./pages/Settings";
 import DevCredentials from "./pages/DevCredentials";
 
@@ -126,7 +127,7 @@ const redirects: Record<string, string> = {
   "communication-hub": "announcements",
   "notices":           "announcements",
   "events":            "announcements",
-  "all-reports":       "reports",
+  "all-reports":       "all-reports",
   "payroll":           "staff",
   "payments":          "payment-history",
   "record-payment":    "finance-dashboard",
@@ -184,6 +185,7 @@ export default function App() {
       case "roles-permissions": return <RolesPermissions />;
       // Reports & Settings
       case "reports":           return <Reports />;
+      case "all-reports":       return <AllReports />;
       case "settings":          return <Settings />;
       // Dev tools (visible only in dev mode)
       case "dev-credentials":   return <DevCredentials />;

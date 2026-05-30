@@ -58,7 +58,7 @@ export const feeCollectionData = {
 };
 
 export const attendanceData = {
-  days: ["Mon 9 May", "Tue 10 May", "Wed 11 May", "Thu 12 May", "Fri 13 May"],
+  days: ["Mon 18 May", "Tue 19 May", "Wed 20 May", "Thu 21 May", "Fri 22 May"],
   percentages: [94, 91, 92, 90, 93],
 };
 

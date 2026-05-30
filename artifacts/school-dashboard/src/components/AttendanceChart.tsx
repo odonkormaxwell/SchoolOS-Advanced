@@ -6,19 +6,19 @@ type Period = "This Week" | "Last Week" | "This Month";
 
 const periodData: Record<Period, { days: string[]; values: number[]; avg: number }> = {
   "This Week": {
-    days: ["Mon 13", "Tue 14", "Wed 15", "Thu 16", "Fri 17"],
+    days: ["Mon 25", "Tue 26", "Wed 27", "Thu 28", "Fri 29"],
     values: [91, 93, 87, 94, 90],
     avg: 91.0,
   },
   "Last Week": {
-    days: ["Mon 6", "Tue 7", "Wed 8", "Thu 9", "Fri 10"],
+    days: ["Mon 18", "Tue 19", "Wed 20", "Thu 21", "Fri 22"],
     values: [89, 92, 95, 88, 91],
     avg: 91.0,
   },
   "This Month": {
-    days: ["Wk 1 (1–3)", "Wk 2 (6–10)", "Wk 3 (13–17)", "Wk 4 (20–24)"],
-    values: [91.4, 92.6, 91.0, 0],
-    avg: 91.7,
+    days: ["Wk 1 (1–9)", "Wk 2 (12–16)", "Wk 3 (19–23)", "Wk 4 (26–30)"],
+    values: [91.4, 92.6, 91.0, 91.2],
+    avg: 91.6,
   },
 };
 
