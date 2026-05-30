@@ -44,6 +44,10 @@ import Payroll from "./pages/Payroll";
 import Classes from "./pages/Classes";
 import Scholarships from "./pages/Scholarships";
 import FinancialReports from "./pages/FinancialReports";
+import SMS from "./pages/SMS";
+import WhatsApp from "./pages/WhatsApp";
+import Email from "./pages/Email";
+import AllReports from "./pages/AllReports";
 import { kpiCards } from "./data/staticData";
 
 interface ToastState { id: number; message: string; type: ToastType; }
@@ -146,6 +150,10 @@ export default function App() {
       case "classes":           return <Classes />;
       case "scholarships":      return <Scholarships />;
       case "financial-reports": return <FinancialReports />;
+      case "sms":               return <SMS />;
+      case "whatsapp":          return <WhatsApp />;
+      case "email":             return <Email />;
+      case "all-reports":       return <AllReports />;
       default:                  return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
     }
   };
