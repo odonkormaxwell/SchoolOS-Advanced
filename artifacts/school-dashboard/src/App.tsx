@@ -142,10 +142,13 @@ const redirects: Record<string, string> = {
 };
 
 const roleMap: Record<string, UserRole> = {
-  administrator:      "administrator",
+  school_owner:       "school_owner",
+  headteacher:        "headteacher",
   teacher:            "teacher",
   accountant:         "accountant",
   admissions_officer: "admissions_officer",
+  parent:             "parent",
+  student:            "student",
 };
 
 function AuthenticatedApp() {

@@ -1,0 +1,731 @@
+# Edulex Phase 2 – Academic Engine, Results Management & Report Card System
+
+## Objective
+
+Build the complete Academic Engine for Edulex.
+
+This module will become the core academic system used by schools to:
+
+* Manage academic years
+* Manage classes and streams
+* Manage subjects
+* Configure assessments
+* Record scores
+* Generate results
+* Approve results
+* Publish results
+* Generate report cards
+* Promote students
+* Generate academic reports
+
+The final system should be suitable for KG, Primary, and JHS schools in Ghana.
+
+Role permissions previously defined must be enforced throughout this module.
+
+---
+
+# MODULE 1: ACADEMIC STRUCTURE
+
+Create:
+
+Academics → Academic Structure
+
+Allow schools to configure their academic hierarchy.
+
+## Default Structure
+
+KG
+
+* KG1
+* KG2
+
+Primary
+
+* Primary 1
+* Primary 2
+* Primary 3
+* Primary 4
+* Primary 5
+* Primary 6
+
+JHS
+
+* JHS1
+* JHS2
+* JHS3
+
+---
+
+## Streams
+
+Allow schools to create streams.
+
+Examples:
+
+* P1A
+* P1B
+* JHS1A
+* JHS1B
+
+or
+
+* JHS1 Science
+* JHS1 Business
+
+Schools should decide their own naming convention.
+
+---
+
+## Permissions
+
+School Owner:
+
+View only
+
+Headteacher:
+
+Create
+Edit
+Archive
+
+Teacher:
+
+View only assigned classes
+
+---
+
+# MODULE 2: SUBJECT MANAGEMENT
+
+Create:
+
+Academics → Subjects
+
+Fields:
+
+* Subject Name
+* Subject Code
+* Class
+* Academic Year
+* Teacher Assignment
+* Status
+
+Examples:
+
+* Mathematics
+* English Language
+* Science
+* Computing
+* Creative Arts
+* RME
+* French
+* Career Technology
+
+---
+
+## Subject Assignment
+
+Allow Headteacher to assign:
+
+Teacher → Subject → Class
+
+Example:
+
+Ama Owusu
+
+↓
+
+Mathematics
+
+↓
+
+JHS1A
+
+---
+
+## Permissions
+
+Headteacher:
+
+Create
+Edit
+Archive
+
+Teacher:
+
+View assigned subjects only
+
+---
+
+# MODULE 3: ASSESSMENT CONFIGURATION
+
+Create:
+
+Academics → Assessment Setup
+
+Schools should be able to define how marks are calculated.
+
+---
+
+## Example Structure
+
+Class Exercises
+
+10%
+
+Homework
+
+10%
+
+Project
+
+10%
+
+Midterm
+
+20%
+
+End of Term Examination
+
+50%
+
+Total
+
+100%
+
+---
+
+Schools should be able to:
+
+* Add assessment types
+* Edit weightings
+* Remove assessment types
+* Save templates by class
+
+Total must always equal 100%.
+
+---
+
+# MODULE 4: GRADING SYSTEM
+
+Create:
+
+Settings → Academic Settings → Grading System
+
+---
+
+## Default Ghanaian Example
+
+80 – 100 = A
+
+70 – 79 = B
+
+60 – 69 = C
+
+50 – 59 = D
+
+0 – 49 = F
+
+---
+
+Allow schools to:
+
+* Add grades
+* Edit grades
+* Change remarks
+* Save grading template
+
+---
+
+## Remarks
+
+Example:
+
+A = Excellent
+
+B = Very Good
+
+C = Good
+
+D = Fair
+
+F = Needs Improvement
+
+---
+
+# MODULE 5: SCORE ENTRY SYSTEM
+
+Create:
+
+Academics → Assessments → Enter Scores
+
+Teacher should only access:
+
+* Assigned Classes
+* Assigned Subjects
+
+---
+
+## Score Entry
+
+Display:
+
+Student List
+
+Columns:
+
+* Student Name
+* Assessment Type
+* Score
+
+Validation:
+
+* Prevent invalid scores
+* Prevent scores above maximum
+* Prevent negative values
+
+Auto-save drafts.
+
+---
+
+## Calculations
+
+Automatically calculate:
+
+* Continuous Assessment Total
+* Examination Score
+* Overall Score
+* Grade
+* Remark
+
+Do not require manual calculation.
+
+---
+
+# MODULE 6: RESULT WORKFLOW
+
+Results should follow approval workflow.
+
+---
+
+## Teacher
+
+Can:
+
+* Enter scores
+* Edit scores before submission
+* Submit results
+
+Cannot:
+
+* Publish results
+* Approve results
+
+---
+
+## Headteacher
+
+Can:
+
+* Review submitted results
+* Approve results
+* Reject results
+* Publish results
+* Reopen results
+* Lock results
+
+---
+
+## Workflow
+
+Teacher
+
+↓
+
+Enter Scores
+
+↓
+
+Submit Results
+
+↓
+
+Headteacher Review
+
+↓
+
+Approve
+
+↓
+
+Publish
+
+↓
+
+Lock
+
+---
+
+Once locked:
+
+Teacher can no longer edit.
+
+---
+
+# MODULE 7: REPORT CARD GENERATOR
+
+Create:
+
+Academics → Report Cards
+
+This must be one of the most premium areas in Edulex.
+
+---
+
+## Report Card Header
+
+Include:
+
+* School Logo
+* School Name
+* School Motto
+* Student Photo
+* Student Name
+* Student ID
+* Class
+* Academic Year
+* Term
+
+---
+
+## Academic Table
+
+Columns:
+
+* Subject
+* CA Score
+* Exam Score
+* Total
+* Grade
+* Remark
+
+---
+
+## Summary
+
+Display:
+
+* Total Score
+* Average Score
+* Position
+* Attendance Percentage
+* Conduct Rating
+
+---
+
+## Remarks Section
+
+Teacher Remark
+
+Headteacher Remark
+
+---
+
+## Signatures
+
+Teacher Signature
+
+Headteacher Signature
+
+School Stamp
+
+---
+
+## Actions
+
+* Preview
+* Print
+* Download PDF
+* Email to Parent
+* Publish to Parent Portal
+
+---
+
+# MODULE 8: RESULT ANALYTICS
+
+Create:
+
+Academics → Analytics
+
+Display:
+
+---
+
+## Class Performance
+
+* Class Average
+* Highest Score
+* Lowest Score
+* Pass Rate
+
+---
+
+## Student Rankings
+
+* Top Students
+* Bottom Students
+
+Allow schools to disable rankings if preferred.
+
+---
+
+## Subject Performance
+
+Display:
+
+* Best Subject
+* Weakest Subject
+* Subject Averages
+
+---
+
+# MODULE 9: BROADSHEET
+
+Create:
+
+Academics → Broadsheet
+
+Display all students in one academic sheet.
+
+Columns:
+
+* Student Name
+* Subject Scores
+* Total
+* Average
+* Position
+
+Actions:
+
+* Print
+* Export PDF
+* Export CSV
+
+---
+
+# MODULE 10: PROMOTION ENGINE
+
+Create:
+
+Academics → Student Promotion
+
+---
+
+## Promotion Options
+
+Promote
+
+Example:
+
+KG1 → KG2
+
+Primary 1 → Primary 2
+
+JHS1 → JHS2
+
+---
+
+## Repeat
+
+Keep student in same class.
+
+---
+
+## Graduate
+
+JHS3
+
+↓
+
+Graduated
+
+Status:
+
+Graduated
+
+---
+
+## Transfer
+
+Student transferred out.
+
+Status:
+
+Transferred
+
+---
+
+No records should be deleted.
+
+---
+
+# MODULE 11: ACADEMIC REPORTS
+
+Create:
+
+Reports → Academic Reports
+
+Reports:
+
+* Class Result Sheet
+* Student Report Card
+* Broadsheet
+* Subject Performance
+* Promotion Report
+* Attendance Summary
+
+Actions:
+
+* View
+* Print
+* Export CSV
+* Export PDF
+
+---
+
+# MODULE 12: PARENT PORTAL INTEGRATION
+
+Once results are published:
+
+Parent should see:
+
+* Report Card
+* Results
+* Rankings, if enabled
+* Attendance
+* Teacher Remarks
+
+Only for linked children.
+
+---
+
+# MODULE 13: STUDENT PORTAL INTEGRATION
+
+Student should see:
+
+* Results
+* Report Cards
+* Attendance
+* Timetable
+
+Only own records.
+
+---
+
+# MODULE 14: AUDIT LOGS
+
+Track:
+
+* Score Entry
+* Score Modification
+* Result Submission
+* Result Approval
+* Result Rejection
+* Result Publication
+* Result Reopening
+
+Fields:
+
+* User
+* Role
+* Action
+* Date
+* Student
+* Subject
+
+No academic records should be silently modified.
+
+---
+
+# MODULE 15: ROLE ENFORCEMENT
+
+School Owner
+
+View reports only.
+
+Cannot enter scores.
+
+Cannot publish results.
+
+---
+
+Headteacher
+
+Approve and publish results.
+
+Manage academic structure.
+
+---
+
+Teacher
+
+Enter scores only for assigned classes and subjects.
+
+Cannot approve or publish.
+
+---
+
+Parent
+
+View only linked child records.
+
+---
+
+Student
+
+View only own records.
+
+---
+
+# TESTING REQUIREMENTS
+
+Verify:
+
+✓ Academic years work
+
+✓ Classes and streams work
+
+✓ Subjects work
+
+✓ Teacher assignments work
+
+✓ Assessment setup works
+
+✓ Grading system works
+
+✓ Score entry works
+
+✓ Automatic calculations work
+
+✓ Approval workflow works
+
+✓ Result publishing works
+
+✓ Report card generation works
+
+✓ PDF export works
+
+✓ Broadsheet works
+
+✓ Analytics works
+
+✓ Promotion engine works
+
+✓ Parent portal receives results
+
+✓ Student portal receives results
+
+✓ Audit logs work
+
+✓ Role permissions are enforced
+
+The Academic Engine should become the foundation of Edulex and must feel production-ready before moving to Parent Portal enhancements and the full UI/UX redesign.

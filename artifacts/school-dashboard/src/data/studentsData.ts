@@ -72,24 +72,24 @@ export interface Student {
 }
 
 const houses = [
-  { name: "Topaz",   color: "#0d9488", bg: "#ccfbf1" },
-  { name: "Diamond", color: "#2563eb", bg: "#dbeafe" },
-  { name: "Ruby",    color: "#dc2626", bg: "#fee2e2" },
-  { name: "Emerald", color: "#15803d", bg: "#dcfce7" },
-  { name: "Pearl",   color: "#b45309", bg: "#fef3c7" },
+  { house: "Topaz",   houseColor: "#0d9488", houseBg: "#ccfbf1" },
+  { house: "Diamond", houseColor: "#2563eb", houseBg: "#dbeafe" },
+  { house: "Ruby",    houseColor: "#dc2626", houseBg: "#fee2e2" },
+  { house: "Emerald", houseColor: "#15803d", houseBg: "#dcfce7" },
+  { house: "Pearl",   houseColor: "#b45309", houseBg: "#fef3c7" },
 ];
 
 const avatarPalettes = [
-  { bg: "#bfdbfe", color: "#1e3a8a" },
-  { bg: "#fce7f3", color: "#9d174d" },
-  { bg: "#fef9c3", color: "#713f12" },
-  { bg: "#dbeafe", color: "#1e3a8a" },
-  { bg: "#ede9fe", color: "#4c1d95" },
-  { bg: "#fef3c7", color: "#78350f" },
-  { bg: "#dcfce7", color: "#14532d" },
-  { bg: "#e0e7ff", color: "#3730a3" },
-  { bg: "#ffedd5", color: "#7c2d12" },
-  { bg: "#f3e8ff", color: "#6b21a8" },
+  { avatarBg: "#bfdbfe", avatarColor: "#1e3a8a" },
+  { avatarBg: "#fce7f3", avatarColor: "#9d174d" },
+  { avatarBg: "#fef9c3", avatarColor: "#713f12" },
+  { avatarBg: "#dbeafe", avatarColor: "#1e3a8a" },
+  { avatarBg: "#ede9fe", avatarColor: "#4c1d95" },
+  { avatarBg: "#fef3c7", avatarColor: "#78350f" },
+  { avatarBg: "#dcfce7", avatarColor: "#14532d" },
+  { avatarBg: "#e0e7ff", avatarColor: "#3730a3" },
+  { avatarBg: "#ffedd5", avatarColor: "#7c2d12" },
+  { avatarBg: "#f3e8ff", avatarColor: "#6b21a8" },
 ];
 
 export const students: Student[] = [

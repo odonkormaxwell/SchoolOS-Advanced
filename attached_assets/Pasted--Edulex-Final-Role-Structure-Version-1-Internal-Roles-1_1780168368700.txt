@@ -1,0 +1,385 @@
+# Edulex Final Role Structure (Version 1)
+
+## Internal Roles
+
+1. Super Admin (Edulex)
+2. School Owner (Proprietor)
+3. Headteacher
+4. Teacher
+5. Accountant
+6. Admissions Officer
+
+## External Roles
+
+7. Parent
+8. Student
+
+---
+
+# SUPER ADMIN (EDULEX)
+
+Manages the SaaS platform.
+
+Can:
+
+* Manage schools
+* Manage subscriptions
+* Manage SMS providers
+* Approve Sender IDs
+* Suspend schools
+* Archive schools
+* View platform analytics
+* View platform revenue
+* Impersonate users for support
+* Manage plans and billing
+
+Cannot:
+
+* Edit school academic data directly unless impersonating
+
+---
+
+# SCHOOL OWNER (PROPRIETOR)
+
+Business owner of the school.
+
+Focus:
+
+* Revenue
+* School branding
+* Subscription management
+* User oversight
+* Compliance
+
+Can Access:
+
+* Dashboard
+* Finance Dashboard
+* Fees
+* Invoices
+* Payments
+* Reports
+* Communication
+* Staff
+* User Management
+* School Branding
+* Backup & Recovery
+* Subscription & Billing
+* Audit Logs
+* Settings
+
+Can:
+
+* Create users
+* Disable users
+* Reset passwords
+* Purchase SMS credits
+* Request Sender IDs
+* Upgrade subscription
+* View all reports
+* Generate backups
+* Restore backups
+* Archive students
+* Archive staff
+
+Cannot:
+
+* Enter student results
+* Mark attendance
+* Enter assessment scores
+
+---
+
+# HEADTEACHER
+
+Academic and operational leader.
+
+Focus:
+
+* Students
+* Teachers
+* Attendance
+* Results
+* Academic quality
+
+Can Access:
+
+* Dashboard
+* Students
+* Admissions
+* Attendance
+* Academics
+* Subjects
+* Classes
+* Timetable
+* Assessments
+* Communication
+* Staff Directory
+* Academic Reports
+
+Can:
+
+* Approve admissions
+* Approve results
+* Publish results
+* Reopen results
+* Lock results
+* Assign teachers
+* Assign class teachers
+* Promote students
+* Manage academic year transitions
+* Archive students
+* Generate report cards
+
+Cannot:
+
+* Manage subscriptions
+* Configure Paystack
+* Purchase SMS credits
+* Access Edulex billing
+* Restore backups
+* Delete financial records
+
+---
+
+# TEACHER
+
+Can Access:
+
+* Dashboard
+* Assigned Classes
+* Assigned Subjects
+* Attendance
+* Assessments
+* Timetable
+* Class Communication
+* Profile
+
+Can:
+
+* Mark attendance
+* Enter scores
+* Submit results
+* View assigned students
+* Send class announcements
+
+Cannot:
+
+* Publish results
+* Approve results
+* Access fees
+* Access payments
+* Manage staff
+* Access settings
+* Access reports outside assigned classes
+
+Teacher access must be scoped to assigned classes only.
+
+---
+
+# ACCOUNTANT
+
+Focus:
+
+* Fee collection
+* Reconciliation
+* Receipts
+* Invoices
+
+Can Access:
+
+* Dashboard
+* Fees
+* Invoices
+* Payments
+* Balances
+* Finance Reports
+* Reconciliation
+* Payment History
+
+Can:
+
+* Record payments
+* Generate receipts
+* Export finance reports
+* Record offline payments
+* Send fee reminders
+
+Cannot:
+
+* Create fee structures
+* Edit fee structures
+* Delete fee structures
+* Delete payments
+* Delete invoices
+* Publish results
+* Manage users
+* Manage subscriptions
+
+Optional Permissions:
+
+* Approve offline payments
+* Reverse payments
+
+---
+
+# ADMISSIONS OFFICER
+
+Focus:
+
+* New student onboarding
+
+Can Access:
+
+* Dashboard
+* Admissions
+* Student Registration
+* Student Documents
+* Admissions Reports
+
+Can:
+
+* Create admission applications
+* Edit admission applications
+* Upload documents
+* Generate admission letters
+
+Cannot:
+
+* Approve admissions
+* Approve fees
+* Publish results
+* Manage users
+* Manage settings
+
+Admissions approval belongs to Headteacher.
+
+---
+
+# PARENT
+
+Can Access:
+
+* Parent Dashboard
+* Child Attendance
+* Child Results
+* Report Cards
+* Invoices
+* Receipts
+* Payment History
+* Announcements
+* Profile
+
+Can:
+
+* Pay fees
+* Download receipts
+* View academic progress
+
+Cannot:
+
+* Edit records
+* View other children
+* Access admin features
+
+Parent access must be child-scoped.
+
+---
+
+# STUDENT
+
+Can Access:
+
+* Student Dashboard
+* Timetable
+* Attendance
+* Assignments
+* Results
+* Report Cards
+* Announcements
+* Profile
+
+Can:
+
+* View own records only
+
+Cannot:
+
+* Edit academic records
+* Access other students
+* Access administration features
+
+Student access must be self-scoped.
+
+---
+
+# CRITICAL RESTRICTIONS
+
+No role except Super Admin should:
+
+* Delete a school
+* Delete the database
+* Reset the system
+
+No role should permanently delete:
+
+* Payments
+* Receipts
+* Audit Logs
+* Published Results
+
+Use:
+
+* Archive
+* Reverse
+* Void
+
+instead of Delete.
+
+---
+
+# APPROVAL WORKFLOWS
+
+Admissions:
+
+Admissions Officer
+→ Headteacher Approval
+
+Results:
+
+Teacher
+→ Headteacher Approval
+→ Publish
+
+Fee Structure Changes:
+
+Accountant Proposal
+→ School Owner Approval
+
+Offline Payment Approval:
+
+Accountant
+→ School Owner Approval
+
+Sender ID Request:
+
+School Owner
+→ Super Admin Approval
+
+Subscription Changes:
+
+School Owner Only
+
+---
+
+# DATA OWNERSHIP MODEL
+
+School Owner owns the business.
+
+Headteacher manages academics.
+
+This separation must be enforced throughout the system.
+
+No academic workflow should require School Owner intervention.
+
+No billing or subscription workflow should require Headteacher intervention.

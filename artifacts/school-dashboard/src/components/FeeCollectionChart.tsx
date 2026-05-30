@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import type { ApexOptions } from "apexcharts";
 
 type Period = "This Week" | "This Month" | "This Term" | "Last Month";
 
@@ -48,7 +49,7 @@ export default function FeeCollectionChart() {
       const ApexCharts = mod.default;
       const data = periodData[period];
 
-      const options = {
+      const options: ApexOptions = {
         chart: { type: "area", height: 160, toolbar: { show: false }, zoom: { enabled: false }, animations: { enabled: true, speed: 400 } },
         series: [
           { name: "Collected", data: data.collected },

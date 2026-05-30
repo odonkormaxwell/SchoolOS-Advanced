@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Bus, ArrowRight } from "lucide-react";
+import type { ApexOptions } from "apexcharts";
 import { useApp } from "../context/AppContext";
 
 export default function TransportStatus() {
@@ -11,7 +12,7 @@ export default function TransportStatus() {
     const load = async () => {
       const mod = await import("apexcharts");
       const ApexCharts = mod.default;
-      const options = {
+      const options: ApexOptions = {
         chart: { type: "radialBar", height: 140, toolbar: { show: false } },
         series: [Math.round((16 / 18) * 100)],
         plotOptions: {

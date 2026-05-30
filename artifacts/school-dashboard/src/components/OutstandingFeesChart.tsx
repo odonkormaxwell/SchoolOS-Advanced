@@ -56,7 +56,7 @@ export default function OutstandingFeesChart() {
       const data = termData[term];
 
       const options = {
-        chart: { type: "donut", height: 200, toolbar: { show: false }, animations: { enabled: true, speed: 400 } },
+        chart: { type: "donut" as const, height: 200, toolbar: { show: false }, animations: { enabled: true, speed: 400 } },
         series: data.classes.map((f) => f.value),
         labels: data.classes.map((f) => f.class),
         colors: data.classes.map((f) => f.color),

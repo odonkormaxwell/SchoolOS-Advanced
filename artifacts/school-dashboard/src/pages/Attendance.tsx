@@ -35,6 +35,7 @@ function WeeklyTrendChart() {
   useEffect(() => {
     let chart: any;
     import("apexcharts").then(({ default: ApexCharts }) => {
+      if (!ref.current) return;
       chart = new ApexCharts(ref.current, {
         chart: { type: "line", height: 90, toolbar: { show: false }, sparkline: { enabled: false }, animations: { enabled: false } },
         series: [{ name: "Attendance %", data: [88, 85, 82, 90, 92] }],

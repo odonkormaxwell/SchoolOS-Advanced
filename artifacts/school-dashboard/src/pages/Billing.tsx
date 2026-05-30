@@ -25,6 +25,7 @@ function RevenueTrendChart() {
   useEffect(() => {
     let chart: any;
     import("apexcharts").then(({ default: ApexCharts }) => {
+      if (!ref.current) return;
       chart = new ApexCharts(ref.current, {
         chart: { type: "area", height: 140, toolbar: { show: false }, animations: { enabled: false } },
         series: [{ name: "Revenue (GHS)", data: [45000, 52000, 48000, 65000, 72000, 96430] }],
@@ -47,6 +48,7 @@ function FeeBreakdownDonut() {
   useEffect(() => {
     let chart: any;
     import("apexcharts").then(({ default: ApexCharts }) => {
+      if (!ref.current) return;
       chart = new ApexCharts(ref.current, {
         chart: { type: "donut", height: 180, toolbar: { show: false } },
         series: [207900, 48790, 36790, 29950, 21650],

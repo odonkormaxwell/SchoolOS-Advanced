@@ -34,6 +34,7 @@ function PerformanceDonut({ pct }: { pct: number }) {
   useEffect(() => {
     let chart: any;
     import("apexcharts").then(({ default: ApexCharts }) => {
+      if (!ref.current) return;
       chart = new ApexCharts(ref.current, {
         chart: { type: "radialBar", height: 120, toolbar: { show: false } },
         series: [pct], colors: ["#7c3aed"], labels: ["Score"],
@@ -51,6 +52,7 @@ function ClassPerfChart() {
   useEffect(() => {
     let chart: any;
     import("apexcharts").then(({ default: ApexCharts }) => {
+      if (!ref.current) return;
       chart = new ApexCharts(ref.current, {
         chart: { type: "bar", height: 130, toolbar: { show: false }, animations: { enabled: false } },
         series: [{ name: "Average %", data: [76, 72, 74, 76, 81] }],
@@ -71,6 +73,7 @@ function SubjectDistDonut() {
   useEffect(() => {
     let chart: any;
     import("apexcharts").then(({ default: ApexCharts }) => {
+      if (!ref.current) return;
       chart = new ApexCharts(ref.current, {
         chart: { type: "donut", height: 140, toolbar: { show: false } },
         series: [12, 16, 7, 4], labels: ["A (80+%)", "B (70-79%)", "C (60-69%)", "D (<50%)"],

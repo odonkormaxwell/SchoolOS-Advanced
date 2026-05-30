@@ -39,7 +39,7 @@ export default function AttendanceChart() {
 
       const options = {
         chart: {
-          type: "bar", height: 185, toolbar: { show: false }, zoom: { enabled: false },
+          type: "bar" as const, height: 185, toolbar: { show: false }, zoom: { enabled: false },
           parentHeightOffset: 0, animations: { enabled: true, speed: 400 },
         },
         series: [{ name: "Attendance %", data: data.values }],

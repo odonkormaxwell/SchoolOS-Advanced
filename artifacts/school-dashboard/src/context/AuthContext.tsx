@@ -30,22 +30,23 @@ export type SecurityEvent = {
 };
 
 const INITIAL_USERS: AuthUser[] = [
-  { id: "u1", name: "Emmanuel Mensah",  role: "Administrator (Headteacher)", roleKey: "administrator",      email: "headteacher@happykids.edu.gh",  password: "password123", initials: "EM", avatarBg: "#ede9fe", avatarColor: "#7c3aed", phone: "+233 24 456 7890", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u2", name: "Kofi Mensah",      role: "Administrator",               roleKey: "administrator",      email: "admin@happykids.edu.gh",         password: "password123", initials: "KM", avatarBg: "#dbeafe", avatarColor: "#2563eb", phone: "+233 20 345 6789", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u3", name: "Ama Owusu",        role: "Teacher",                     roleKey: "teacher",            email: "ama.owusu@happykids.edu.gh",    password: "password123", initials: "AO", avatarBg: "#fce7f3", avatarColor: "#9d174d", phone: "+233 26 234 5678", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u4", name: "Kwame Asante",     role: "Teacher",                     roleKey: "teacher",            email: "kwame.asante@happykids.edu.gh", password: "password123", initials: "KA", avatarBg: "#dcfce7", avatarColor: "#16a34a", phone: "+233 23 123 4567", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u5", name: "Yaw Boateng",      role: "Accountant",                  roleKey: "accountant",         email: "accounts@happykids.edu.gh",     password: "password123", initials: "YB", avatarBg: "#f0fdf4", avatarColor: "#15803d", phone: "+233 27 987 6543", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u6", name: "Abena Nyarko",     role: "Admissions Officer",          roleKey: "admissions_officer", email: "admissions@happykids.edu.gh",   password: "password123", initials: "AN", avatarBg: "#fef3c7", avatarColor: "#d97706", phone: "+233 25 876 5432", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u7", name: "Grace Ofori",      role: "Parent",                      roleKey: "parent",             email: "parent.demo@happykids.edu.gh",  password: "password123", initials: "GO", avatarBg: "#f3f4f6", avatarColor: "#6b7280", phone: "+233 24 765 4321", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
-  { id: "u8", name: "Michael Ofori",    role: "Student",                     roleKey: "student",            email: "student.demo@happykids.edu.gh", password: "password123", initials: "MO", avatarBg: "#f3f4f6", avatarColor: "#6b7280", phone: "", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u1", name: "Emmanuel Mensah",  role: "Headteacher",           roleKey: "headteacher",        email: "headteacher@happykids.edu.gh",  password: "password123", initials: "EM", avatarBg: "#ede9fe", avatarColor: "#7c3aed", phone: "+233 24 456 7890", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u2", name: "Kofi Mensah",      role: "School Owner",          roleKey: "school_owner",       email: "admin@happykids.edu.gh",         password: "password123", initials: "KM", avatarBg: "#dbeafe", avatarColor: "#0369a1", phone: "+233 20 345 6789", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u3", name: "Ama Owusu",        role: "Teacher (Class)",       roleKey: "teacher",            email: "ama.owusu@happykids.edu.gh",    password: "password123", initials: "AO", avatarBg: "#fce7f3", avatarColor: "#9d174d", phone: "+233 26 234 5678", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u4", name: "Kwame Asante",     role: "Teacher (Subject)",     roleKey: "teacher",            email: "kwame.asante@happykids.edu.gh", password: "password123", initials: "KA", avatarBg: "#dcfce7", avatarColor: "#16a34a", phone: "+233 23 123 4567", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u5", name: "Yaw Boateng",      role: "Accountant",            roleKey: "accountant",         email: "accounts@happykids.edu.gh",     password: "password123", initials: "YB", avatarBg: "#f0fdf4", avatarColor: "#15803d", phone: "+233 27 987 6543", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u6", name: "Abena Nyarko",     role: "Admissions Officer",    roleKey: "admissions_officer", email: "admissions@happykids.edu.gh",   password: "password123", initials: "AN", avatarBg: "#fef3c7", avatarColor: "#d97706", phone: "+233 25 876 5432", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u7", name: "Grace Ofori",      role: "Parent",                roleKey: "parent",             email: "parent.demo@happykids.edu.gh",  password: "password123", initials: "GO", avatarBg: "#f3f4f6", avatarColor: "#6b7280", phone: "+233 24 765 4321", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
+  { id: "u8", name: "Michael Ofori",    role: "Student",               roleKey: "student",            email: "student.demo@happykids.edu.gh", password: "password123", initials: "MO", avatarBg: "#fdf4ff", avatarColor: "#9333ea", phone: "", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
 ];
 
-const TWO_FA_ROLES = ["administrator", "accountant"];
-const INACTIVITY_MS  = 30 * 60 * 1000;
-const OTP_VALID_MS   = 10 * 60 * 1000;
+// Roles that trigger 2FA on login
+const TWO_FA_ROLES = ["school_owner", "headteacher", "accountant"];
+const INACTIVITY_MS = 30 * 60 * 1000;
+const OTP_VALID_MS  = 10 * 60 * 1000;
 
 function generateOtp() { return String(Math.floor(100000 + Math.random() * 900000)); }
-function getDevice()   {
+function getDevice() {
   const ua = navigator.userAgent;
   const browser = ua.includes("Chrome") ? "Chrome" : ua.includes("Firefox") ? "Firefox" : ua.includes("Safari") ? "Safari" : "Browser";
   return `${navigator.platform || "Web"} · ${browser}`;
@@ -96,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const otpInterval     = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Restore session on mount
   useEffect(() => {
     try {
       const raw = localStorage.getItem("schoolos_session") || sessionStorage.getItem("schoolos_session");
