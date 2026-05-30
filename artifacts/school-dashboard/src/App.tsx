@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { AppContext, ToastType } from "./context/AppContext";
 import { useWindowSize } from "./hooks/useWindowSize";
 import Toast from "./components/Toast";
-import Sidebar from "./components/Sidebar";
+import Sidebar, { UserRole } from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
 import Topbar from "./components/Topbar";
 import DashboardHeader from "./components/DashboardHeader";
@@ -16,38 +16,48 @@ import QuickActions from "./components/QuickActions";
 import TransportStatus from "./components/TransportStatus";
 import TodaySchedule from "./components/TodaySchedule";
 import EventsCalendar from "./components/EventsCalendar";
+
+// Pages — V1 sidebar
 import AllStudents from "./pages/AllStudents";
 import Admissions from "./pages/Admissions";
 import Attendance from "./pages/Attendance";
+import Subjects from "./pages/Subjects";
+import Classes from "./pages/Classes";
+import Timetable from "./pages/Timetable";
+import Assessments from "./pages/Assessments";
+import FeeStructure from "./pages/FeeStructure";
+import Invoices from "./pages/Invoices";
+import Payments from "./pages/Payments";
+import Balances from "./pages/Balances";
+import AnnouncementsPage from "./pages/Announcements";
+import SMS from "./pages/SMS";
+import WhatsApp from "./pages/WhatsApp";
+import Email from "./pages/Email";
+import Staff from "./pages/Staff";
+import RolesPermissions from "./pages/RolesPermissions";
+import AllReports from "./pages/AllReports";
+
+// Hidden pages (still accessible via direct navigation / redirects)
 import Gradebook from "./pages/Gradebook";
 import Billing from "./pages/Billing";
 import CommunicationHub from "./pages/CommunicationHub";
 import Transport from "./pages/Transport";
-import Timetable from "./pages/Timetable";
 import ReportCards from "./pages/ReportCards";
 import HealthRecords from "./pages/HealthRecords";
 import Exams from "./pages/Exams";
 import Discipline from "./pages/Discipline";
-import Staff from "./pages/Staff";
 import Library from "./pages/Library";
 import Homework from "./pages/Homework";
 import Events from "./pages/Events";
-import Subjects from "./pages/Subjects";
-import Invoices from "./pages/Invoices";
 import Notices from "./pages/Notices";
 import Expenses from "./pages/Expenses";
 import Results from "./pages/Results";
 import Inventory from "./pages/Inventory";
-import Payments from "./pages/Payments";
 import Feeding from "./pages/Feeding";
 import Payroll from "./pages/Payroll";
-import Classes from "./pages/Classes";
 import Scholarships from "./pages/Scholarships";
 import FinancialReports from "./pages/FinancialReports";
-import SMS from "./pages/SMS";
-import WhatsApp from "./pages/WhatsApp";
-import Email from "./pages/Email";
-import AllReports from "./pages/AllReports";
+
 import { kpiCards } from "./data/staticData";
 
 interface ToastState { id: number; message: string; type: ToastType; }
@@ -101,12 +111,30 @@ function ComingSoon({ label }: { label: string }) {
 export default function App() {
   const [activePage, setActivePage] = useState("dashboard");
   const [toasts, setToasts] = useState<ToastState[]>([]);
+  const [userRole] = useState<UserRole>("administrator");
   const { isMobile, isTablet } = useWindowSize();
 
   const sidebarWidth = isMobile ? 0 : isTablet ? 64 : 220;
 
   const onNavigate = useCallback((page: string) => {
-    setActivePage(page);
+    // Redirect old routes to merged modules
+    const redirects: Record<string, string> = {
+      "homework":          "assessments",
+      "exams":             "assessments",
+      "results":           "assessments",
+      "gradebook":         "assessments",
+      "report-cards":      "assessments",
+      "billing":           "fee-structure",
+      "financial-reports": "reports",
+      "expenses":          "reports",
+      "scholarships":      "fee-structure",
+      "communication-hub": "announcements",
+      "notices":           "announcements",
+      "events":            "announcements",
+      "all-reports":       "reports",
+      "payroll":           "staff",
+    };
+    setActivePage(redirects[page] ?? page);
     window.scrollTo(0, 0);
   }, []);
 
@@ -121,40 +149,53 @@ export default function App() {
 
   const renderPage = () => {
     switch (activePage) {
+      // Dashboard
       case "dashboard":         return <DashboardPage />;
+
+      // Students
       case "all-students":      return <AllStudents />;
       case "admissions":        return <Admissions />;
       case "attendance":        return <Attendance />;
-      case "gradebook":         return <Gradebook />;
-      case "billing":           return <Billing />;
-      case "communication-hub": return <CommunicationHub />;
-      case "transport":         return <Transport />;
-      case "timetable":         return <Timetable />;
-      case "report-cards":      return <ReportCards />;
-      case "health":            return <HealthRecords />;
-      case "exams":             return <Exams />;
-      case "discipline":        return <Discipline />;
-      case "staff":             return <Staff />;
-      case "library-ops":       return <Library />;
-      case "homework":          return <Homework />;
-      case "events":            return <Events />;
+
+      // Academics
       case "subjects":          return <Subjects />;
-      case "invoices":          return <Invoices />;
-      case "notices":           return <Notices />;
-      case "expenses":          return <Expenses />;
-      case "results":           return <Results />;
-      case "inventory":         return <Inventory />;
-      case "payments":          return <Payments />;
-      case "feeding":           return <Feeding />;
-      case "payroll":           return <Payroll />;
       case "classes":           return <Classes />;
-      case "scholarships":      return <Scholarships />;
-      case "financial-reports": return <FinancialReports />;
+      case "timetable":         return <Timetable />;
+      case "assessments":       return <Assessments />;
+
+      // Fees
+      case "fee-structure":     return <FeeStructure />;
+      case "invoices":          return <Invoices />;
+      case "payments":          return <Payments />;
+      case "balances":          return <Balances />;
+
+      // Communication
+      case "announcements":     return <AnnouncementsPage />;
       case "sms":               return <SMS />;
       case "whatsapp":          return <WhatsApp />;
       case "email":             return <Email />;
-      case "all-reports":       return <AllReports />;
-      default:                  return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
+
+      // Staff
+      case "staff":             return <Staff />;
+      case "roles-permissions": return <RolesPermissions />;
+
+      // Reports
+      case "reports":           return <AllReports />;
+
+      // Settings
+      case "settings":          return <ComingSoon label="Settings" />;
+
+      // Hidden pages — kept for compatibility but not in sidebar
+      case "health":            return <HealthRecords />;
+      case "discipline":        return <Discipline />;
+      case "transport":         return <Transport />;
+      case "library-ops":       return <Library />;
+      case "feeding":           return <Feeding />;
+      case "inventory":         return <Inventory />;
+      case "payroll":           return <Payroll />;
+
+      default:
+        return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
     }
   };
 
@@ -173,10 +214,15 @@ export default function App() {
       `}</style>
 
       <div style={{ display: "flex", minHeight: "100vh", background: "#f4f6fa", fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif" }}>
-        {/* Sidebar — hidden on mobile */}
-        {!isMobile && <Sidebar activePage={activePage} onNavigate={onNavigate} compact={isTablet} />}
+        {!isMobile && (
+          <Sidebar
+            activePage={activePage}
+            onNavigate={onNavigate}
+            compact={isTablet}
+            userRole={userRole}
+          />
+        )}
 
-        {/* Main content */}
         <div style={{ marginLeft: sidebarWidth, flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <Topbar />
           <main style={{
@@ -191,10 +237,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* Mobile bottom navigation */}
       {isMobile && <MobileNav activePage={activePage} />}
 
-      {/* Toasts */}
       {toasts.map((t) => (
         <Toast key={t.id} message={t.message} type={t.type} onClose={() => removeToast(t.id)} />
       ))}

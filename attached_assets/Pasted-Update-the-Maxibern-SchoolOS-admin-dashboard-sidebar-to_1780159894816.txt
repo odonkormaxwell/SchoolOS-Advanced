@@ -1,0 +1,314 @@
+Update the Maxibern SchoolOS admin dashboard sidebar to make it cleaner, simpler, and more suitable for a Version 1 pilot targeting basic schools from KG to Junior High School in Ghana.
+
+The current sidebar is too busy and has too many standalone modules. Please simplify the navigation by removing unnecessary pilot-stage modules, merging related items, and keeping only the most important features schools need at launch.
+
+## Main Goal
+
+Create a clean, beginner-friendly admin dashboard sidebar with fewer primary menu items. The system should feel simple for school administrators, headteachers, accountants, teachers, and admissions officers to use.
+
+## New Sidebar Structure
+
+Use the following structure:
+
+Dashboard
+
+Students
+
+* All Students
+* Admissions
+* Attendance
+
+Academics
+
+* Subjects
+* Classes
+* Timetable
+* Assessments
+
+Fees
+
+* Fee Structure
+* Invoices
+* Payments
+* Balances
+
+Communication
+
+* Announcements
+* SMS
+* WhatsApp
+* Email
+
+Staff
+
+* Staff Directory
+* Roles & Permissions
+
+Reports
+
+Settings
+
+## Remove These Standalone Menu Items From the Sidebar
+
+Remove or hide the following from the main sidebar:
+
+* Health Records
+* Discipline
+* Homework
+* Exams
+* Results
+* Gradebook
+* Report Cards
+* Billing
+* Expenses
+* Payroll
+* Scholarships
+* Financial Reports
+* Communication Hub
+* Notices
+* Events
+* Transport
+* Feeding
+* Inventory
+* Library
+* All Reports
+
+## Merge Logic
+
+Please merge related features as follows:
+
+1. Health Records and Discipline should not be separate sidebar items.
+   They should later exist as tabs inside each Student Profile, not as primary menu items.
+
+2. Homework, Exams, Results, Gradebook, and Report Cards should be merged under one module called Assessments.
+   Inside Assessments, the app can later support:
+
+   * Homework
+   * Class Tests
+   * Mid-Term Exams
+   * End-of-Term Exams
+   * Gradebook
+   * Results
+   * Report Cards
+
+3. Billing, Invoices, Payments, Scholarships, and Financial Reports should be merged under Fees.
+   For Version 1, Fees should include only:
+
+   * Fee Structure
+   * Invoices
+   * Payments
+   * Balances
+
+4. Communication Hub, Notices, SMS, WhatsApp, Email, and Events should be simplified into Communication.
+   For Version 1, Communication should include:
+
+   * Announcements
+   * SMS
+   * WhatsApp
+   * Email
+
+5. Staff and Payroll should be simplified into Staff.
+   For Version 1, Staff should include:
+
+   * Staff Directory
+   * Roles & Permissions
+
+6. Reports should be a single sidebar item.
+   Do not create many report links in the sidebar.
+
+## Modules to Hide for Future Versions
+
+Do not delete the code permanently if it already exists. Hide these modules from the sidebar for now because they are future premium modules:
+
+* Payroll
+* Transport
+* Feeding
+* Inventory
+* Library
+* Health Records
+* Discipline
+* Scholarships
+* Expenses
+* Events
+
+These can be added later as Version 2 or premium add-ons.
+
+## Role-Based Sidebar Visibility
+
+The sidebar should respect user roles and permissions.
+
+The main internal roles are:
+
+* Administrator
+* Teacher
+* Accountant
+* Admissions Officer
+
+External portals are:
+
+* Parent Portal
+* Student Portal
+
+## Permission Rules
+
+Administrator:
+Can access everything in the Version 1 sidebar.
+
+Teacher:
+Can access:
+
+* Dashboard
+* Students, view only for assigned classes
+* Attendance
+* Academics
+* Assessments
+* Communication, limited to announcements/messages if enabled
+* Reports, limited academic reports
+
+Teacher should not access:
+
+* Fees
+* Staff
+* Settings
+* Roles & Permissions
+
+Accountant:
+Can access:
+
+* Dashboard
+* Students, view only
+* Fees
+* Reports, finance-related only
+* Communication, only if enabled by Administrator
+
+Accountant should not access:
+
+* Assessments
+* Academic result editing
+* Staff management
+* Settings
+
+Admissions Officer:
+Can access:
+
+* Dashboard
+* Students
+* Admissions
+* Communication, only if enabled
+* Reports, admissions/student reports only
+
+Admissions Officer should not access:
+
+* Fees unless permission is granted
+* Assessments
+* Staff
+* Settings
+
+## Permission-Based Flexibility
+
+Please ensure the sidebar is not only hardcoded by role. It should also support permissions.
+
+Example permissions:
+
+* manage_students
+* manage_admissions
+* manage_attendance
+* manage_assessments
+* manage_fees
+* manage_staff
+* view_reports
+* manage_communication
+* manage_settings
+* manage_roles_permissions
+
+This will allow the Administrator to give extra access where needed.
+
+For example:
+
+* A small school may allow the Administrator to handle fees.
+* Another school may allow an Accountant to only manage payments.
+* Another school may allow an Admissions Officer to manage student registration only.
+
+## Design Requirements
+
+Keep the existing dark sidebar style and purple highlight branding, but make the sidebar cleaner.
+
+Please apply these UI improvements:
+
+* Reduce the number of visible sidebar items.
+* Use collapsible menu groups for Students, Academics, Fees, Communication, and Staff.
+* Keep Dashboard as the first item.
+* Keep Settings fixed near the bottom.
+* Use clear icons for each group.
+* Avoid duplicate menu items.
+* Avoid showing disabled or future modules in the main sidebar.
+* Maintain good spacing between sections.
+* Make active menu state clear.
+* Ensure the sidebar works well on desktop and mobile.
+* On mobile, the sidebar should collapse into a drawer menu.
+
+## Expected Final Sidebar
+
+The final admin sidebar should look like this:
+
+Dashboard
+
+Students
+
+* All Students
+* Admissions
+* Attendance
+
+Academics
+
+* Subjects
+* Classes
+* Timetable
+* Assessments
+
+Fees
+
+* Fee Structure
+* Invoices
+* Payments
+* Balances
+
+Communication
+
+* Announcements
+* SMS
+* WhatsApp
+* Email
+
+Staff
+
+* Staff Directory
+* Roles & Permissions
+
+Reports
+
+Settings
+
+## Important Development Instructions
+
+Do not break any existing routes or pages unnecessarily.
+
+If old routes already exist, keep them but remove them from the visible sidebar.
+
+Where possible, redirect old menu paths to the new merged module paths.
+
+For example:
+
+* /exams, /results, /gradebook, and /report-cards can be redirected or grouped under /assessments.
+* /billing, /payments, and /invoices can be grouped under /fees.
+* /notices, /sms, /whatsapp, and /email can be grouped under /communication.
+
+Before completing, check that:
+
+* The sidebar does not show duplicate items.
+* Removed modules are no longer visible in the sidebar.
+* Role-based access still works.
+* Permission checks are still respected.
+* Dashboard layout is not broken.
+* Mobile sidebar still works properly.
+* Active menu highlighting works correctly.
