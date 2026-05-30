@@ -1,7 +1,10 @@
 import { useRef, useEffect, useState } from "react";
-import { Settings, FileText, ChevronDown, ChevronLeft, ChevronRight, Search, Users, UserX, CheckCircle, MoreVertical, Bell, X, Check } from "lucide-react";
+import { Settings, FileText, ChevronDown, ChevronLeft, ChevronRight, Search, Users, UserX, CheckCircle, MoreVertical, Bell, X, Check, Download, Printer } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useWindowSize } from "../hooks/useWindowSize";
+import ImportModal from "../components/ImportModal";
+import { exportToCSV } from "../utils/csvExport";
+import { printHTML } from "../utils/printUtils";
 
 const kpiCards = [
   { label: "Present", value: "318", sub: "80.6%", subColor: "#16a34a", icon: "👥", iconBg: "#dcfce7" },
@@ -51,12 +54,13 @@ export default function Attendance() {
   const { showToast } = useApp();
   const { isMobile } = useWindowSize();
 
-  const [activeTab, setActiveTab] = useState("Manual");
+  const [activeTab, setActiveTab]           = useState("Manual");
   const [selectedStudent, setSelectedStudent] = useState(initStudents[0]);
-  const [statuses, setStatuses] = useState<Record<number, string>>(Object.fromEntries(initStudents.map((s) => [s.id, s.status])));
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showPanel, setShowPanel] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [statuses, setStatuses]             = useState<Record<number, string>>(Object.fromEntries(initStudents.map((s) => [s.id, s.status])));
+  const [searchQuery, setSearchQuery]       = useState("");
+  const [showPanel, setShowPanel]           = useState(false);
+  const [saved, setSaved]                   = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const tabs = ["Manual", "QR Code", "RFID Card", "Biometric", "Bulk Import"];
 
@@ -78,6 +82,38 @@ export default function Attendance() {
   const handleSendAlerts = () => {
     const absentCount = Object.values(statuses).filter((s) => s === "Absent").length;
     showToast(`SMS/WhatsApp alerts sent to ${absentCount} parents of absent students`, "info");
+  };
+
+  const handleExport = () => {
+    const rows = initStudents.map((s) => ({
+      "Student ID":  s.sid,
+      "Name":        s.name,
+      "Status":      statuses[s.id] || s.status,
+      "Check-In":    s.time,
+      "Mode":        s.mode,
+      "Note":        s.note,
+      "Class":       "P6 - Topaz",
+      "Date":        "29 May 2026",
+    }));
+    exportToCSV("attendance_export", rows);
+    showToast(`${rows.length} attendance records exported to CSV`, "success");
+  };
+
+  const handlePrint = () => {
+    const rows = initStudents.map((s) =>
+      `<tr><td>${s.sid}</td><td>${s.name}</td><td>${statuses[s.id] || s.status}</td><td>${s.time}</td><td>${s.mode}</td></tr>`
+    ).join("");
+    printHTML(`
+      <h2 style="margin:0 0 10px;font-size:16px;">Attendance Sheet — P6 Topaz</h2>
+      <p style="margin:0 0 14px;font-size:12px;color:#666;">Happy Kids Basic School · Friday, 29 May 2026 · Term 2, 2025/2026</p>
+      <table border="1" cellpadding="7" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead style="background:#f0fdf4;"><tr>
+          <th>Student ID</th><th>Name</th><th>Status</th><th>Check-In</th><th>Mode</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p style="margin:14px 0 0;font-size:11px;color:#999;">Class Teacher: Mr. K. Appiah &nbsp;|&nbsp; Total: ${initStudents.length} students</p>
+    `);
   };
 
   const kpiCols = isMobile ? "repeat(3, 1fr)" : "repeat(5, 1fr)";
@@ -312,7 +348,7 @@ export default function Attendance() {
             <div style={{ fontSize: 12.5, fontWeight: 600, color: "#111827", marginBottom: 10 }}>Quick Actions</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               {[{ icon: "📝", label: "Add Note" }, { icon: "📋", label: "Add Excuse" }, { icon: "🖨️", label: "Print Sheet" }, { icon: "📊", label: "Export" }].map((a) => (
-                <button key={a.label} onClick={() => showToast(`${a.label} action triggered`, "info")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 8px", border: "1px solid #f3f4f6", borderRadius: 8, background: "#fafafa", cursor: "pointer" }}>
+                <button key={a.label} onClick={() => a.label === "Print Sheet" ? handlePrint() : a.label === "Export" ? handleExport() : a.label === "Add Excuse" ? setShowImportModal(true) : showToast(`${a.label} action triggered`, "info")} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 8px", border: "1px solid #f3f4f6", borderRadius: 8, background: "#fafafa", cursor: "pointer" }}>
                   <span style={{ fontSize: 18 }}>{a.icon}</span>
                   <span style={{ fontSize: 10.5, color: "#374151" }}>{a.label}</span>
                 </button>
@@ -342,13 +378,23 @@ export default function Attendance() {
           {/* Date nav */}
           <div style={{ padding: "12px 14px", borderBottom: "1px solid #f3f4f6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <button style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af" }}><ChevronLeft size={14} /></button>
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Wednesday, 15 May</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>Friday, 29 May 2026</span>
             <button style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af" }}><ChevronRight size={14} /></button>
           </div>
           <div style={{ flex: 1, overflowY: "auto" }}>
             <StudentPanel />
           </div>
         </div>
+      )}
+
+      {showImportModal && (
+        <ImportModal
+          title="Import Attendance Records"
+          templateHeaders={["Student ID", "Name", "Status", "Date", "Note"]}
+          templateFilename="attendance_template"
+          onClose={() => setShowImportModal(false)}
+          onImport={() => { setShowImportModal(false); showToast("Attendance records imported successfully!", "success"); }}
+        />
       )}
 
       {/* Mobile bottom sheet */}

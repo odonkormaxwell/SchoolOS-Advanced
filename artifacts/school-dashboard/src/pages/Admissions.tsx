@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Upload, FileText, Plus, Search, ChevronDown, Filter, ChevronLeft, ChevronRight, X, Eye, MoreVertical, Calendar, CheckCircle, AlertCircle, FileCheck } from "lucide-react";
+import { Upload, FileText, Plus, Search, ChevronDown, ChevronLeft, ChevronRight, X, Eye, MoreVertical, Calendar, CheckCircle, Download, Printer } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useWindowSize } from "../hooks/useWindowSize";
+import ImportModal from "../components/ImportModal";
+import { exportToCSV } from "../utils/csvExport";
+import { printHTML } from "../utils/printUtils";
 
 const kpiCards = [
   { label: "Total Applications", value: "126", sub: "This Term", icon: "📋", iconBg: "#e0e7ff", color: "#4f46e5" },
@@ -13,13 +16,13 @@ const kpiCards = [
 ];
 
 const initApplicants = [
-  { id: 1, name: "Kofi Junior Asante", gender: "Male", age: 5, appNo: "HKB-ADM-2024-0126", class: "P1 - 2024/2025", date: "14 May 2024", time: "10:24 AM", status: "Under Review", initials: "KJ", avatarBg: "#bfdbfe", avatarColor: "#1e3a8a", eligibility: 92 },
-  { id: 2, name: "Ama Serwaa Ofori", gender: "Female", age: 4, appNo: "HKB-ADM-2024-0125", class: "KG - 2024/2025", date: "14 May 2024", time: "09:15 AM", status: "Approved", initials: "AS", avatarBg: "#fce7f3", avatarColor: "#9d174d", eligibility: 88 },
-  { id: 3, name: "Daniel Nii Lartey", gender: "Male", age: 6, appNo: "HKB-ADM-2024-0124", class: "P2 - 2024/2025", date: "13 May 2024", time: "02:45 PM", status: "Under Review", initials: "DL", avatarBg: "#dbeafe", avatarColor: "#1e3a8a", eligibility: 75 },
-  { id: 4, name: "Akosua Adwoa Mensah", gender: "Female", age: 5, appNo: "HKB-ADM-2024-0123", class: "P1 - 2024/2025", date: "13 May 2024", time: "11:30 AM", status: "Approved", initials: "AA", avatarBg: "#fce7f3", avatarColor: "#9d174d", eligibility: 90 },
-  { id: 5, name: "Yaw Antwi Boakye", gender: "Male", age: 7, appNo: "HKB-ADM-2024-0122", class: "P3 - 2024/2025", date: "12 May 2024", time: "04:10 PM", status: "Under Review", initials: "YA", avatarBg: "#fef9c3", avatarColor: "#713f12", eligibility: 70 },
-  { id: 6, name: "Efua Korkor Lamptey", gender: "Female", age: 4, appNo: "HKB-ADM-2024-0121", class: "KG - 2024/2025", date: "12 May 2024", time: "10:05 AM", status: "Declined", initials: "EK", avatarBg: "#fce7f3", avatarColor: "#9d174d", eligibility: 45 },
-  { id: 7, name: "Michael Kojo Addo", gender: "Male", age: 6, appNo: "HKB-ADM-2024-0120", class: "P1 - 2024/2025", date: "11 May 2024", time: "03:25 PM", status: "Declined", initials: "MK", avatarBg: "#e0e7ff", avatarColor: "#3730a3", eligibility: 40 },
+  { id: 1, name: "Kofi Junior Asante",  gender: "Male",   age: 5, appNo: "HKB-ADM-2026-0126", class: "P1 - 2025/2026", date: "14 May 2026", time: "10:24 AM", status: "Under Review", initials: "KJ", avatarBg: "#bfdbfe", avatarColor: "#1e3a8a", eligibility: 92 },
+  { id: 2, name: "Ama Serwaa Ofori",    gender: "Female", age: 4, appNo: "HKB-ADM-2026-0125", class: "KG - 2025/2026", date: "14 May 2026", time: "09:15 AM", status: "Approved",    initials: "AS", avatarBg: "#fce7f3", avatarColor: "#9d174d", eligibility: 88 },
+  { id: 3, name: "Daniel Nii Lartey",   gender: "Male",   age: 6, appNo: "HKB-ADM-2026-0124", class: "P2 - 2025/2026", date: "13 May 2026", time: "02:45 PM", status: "Under Review", initials: "DL", avatarBg: "#dbeafe", avatarColor: "#1e3a8a", eligibility: 75 },
+  { id: 4, name: "Akosua Adwoa Mensah", gender: "Female", age: 5, appNo: "HKB-ADM-2026-0123", class: "P1 - 2025/2026", date: "13 May 2026", time: "11:30 AM", status: "Approved",    initials: "AA", avatarBg: "#fce7f3", avatarColor: "#9d174d", eligibility: 90 },
+  { id: 5, name: "Yaw Antwi Boakye",    gender: "Male",   age: 7, appNo: "HKB-ADM-2026-0122", class: "P3 - 2025/2026", date: "12 May 2026", time: "04:10 PM", status: "Under Review", initials: "YA", avatarBg: "#fef9c3", avatarColor: "#713f12", eligibility: 70 },
+  { id: 6, name: "Efua Korkor Lamptey", gender: "Female", age: 4, appNo: "HKB-ADM-2026-0121", class: "KG - 2025/2026", date: "12 May 2026", time: "10:05 AM", status: "Declined",    initials: "EK", avatarBg: "#fce7f3", avatarColor: "#9d174d", eligibility: 45 },
+  { id: 7, name: "Michael Kojo Addo",   gender: "Male",   age: 6, appNo: "HKB-ADM-2026-0120", class: "P1 - 2025/2026", date: "11 May 2026", time: "03:25 PM", status: "Declined",    initials: "MK", avatarBg: "#e0e7ff", avatarColor: "#3730a3", eligibility: 40 },
 ];
 
 const statusStyle = (s: string) => {
@@ -46,13 +49,14 @@ export default function Admissions() {
   const { showToast } = useApp();
   const { isMobile, isTablet } = useWindowSize();
 
-  const [applicants, setApplicants] = useState(initApplicants);
-  const [selected, setSelected] = useState(initApplicants[0]);
-  const [activeTab, setActiveTab] = useState("Overview");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [applicants, setApplicants]     = useState(initApplicants);
+  const [selected, setSelected]         = useState(initApplicants[0]);
+  const [activeTab, setActiveTab]       = useState("Overview");
+  const [currentPage, setCurrentPage]   = useState(1);
+  const [searchQuery, setSearchQuery]   = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
-  const [showPanel, setShowPanel] = useState(false);
+  const [showPanel, setShowPanel]       = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const tabs = ["Overview", "Documents", "Family Info", "History"];
 
@@ -82,6 +86,38 @@ export default function Admissions() {
   const handleScheduleInterview = () => {
     showToast(`Interview scheduled for ${selected.name}`, "info");
     if (isMobile) setShowPanel(false);
+  };
+
+  const handleExport = () => {
+    const rows = filteredApplicants.map((a) => ({
+      "Application No.": a.appNo,
+      "Applicant Name":  a.name,
+      "Gender":          a.gender,
+      "Age":             a.age,
+      "Class Applied":   a.class,
+      "Date Applied":    a.date,
+      "Status":          a.status,
+      "AI Score":        a.eligibility + "%",
+    }));
+    exportToCSV("admissions_export", rows);
+    showToast(`${rows.length} applications exported to CSV`, "success");
+  };
+
+  const handlePrint = () => {
+    const rows = filteredApplicants.map((a) =>
+      `<tr><td>${a.appNo}</td><td>${a.name}</td><td>${a.gender}</td><td>${a.age}</td><td>${a.class}</td><td>${a.date}</td><td>${a.status}</td></tr>`
+    ).join("");
+    printHTML(`
+      <h2 style="margin:0 0 10px;font-size:16px;">Admissions Report — Happy Kids Basic School</h2>
+      <p style="margin:0 0 14px;font-size:12px;color:#666;">Term 2, 2025/2026 · Generated ${new Date().toLocaleDateString("en-GB")}</p>
+      <table border="1" cellpadding="7" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead style="background:#f5f3ff;"><tr>
+          <th>App. No.</th><th>Applicant</th><th>Gender</th><th>Age</th><th>Class</th><th>Date</th><th>Status</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p style="margin:14px 0 0;font-size:11px;color:#999;">Total: ${filteredApplicants.length} applications printed</p>
+    `);
   };
 
   const kpiCols = isMobile ? "repeat(3, 1fr)" : isTablet ? "repeat(3, 1fr)" : "repeat(6, 1fr)";
@@ -179,8 +215,8 @@ export default function Admissions() {
               ↩ Move to Review
             </button>
           )}
-          <button onClick={() => { showToast("Printing application form...", "info"); if (isMobile) setShowPanel(false); }} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #e5e7eb", background: "white", color: "#374151", fontSize: 12.5, fontWeight: 500, cursor: "pointer" }}>
-            🖨 Print Application Form
+          <button onClick={() => { handlePrint(); if (isMobile) setShowPanel(false); }} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #e5e7eb", background: "white", color: "#374151", fontSize: 12.5, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+            <Printer size={13} /> Print Application Form
           </button>
         </div>
       </div>
@@ -209,8 +245,14 @@ export default function Admissions() {
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {!isMobile && (
               <>
-                <button onClick={() => showToast("Downloading application report...", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
-                  <FileText size={13} color="#6b7280" /> Generate Report
+                <button onClick={() => setShowImportModal(true)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                  <Upload size={13} color="#6b7280" /> Import
+                </button>
+                <button onClick={handleExport} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                  <Download size={13} color="#6b7280" /> Export
+                </button>
+                <button onClick={handlePrint} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                  <Printer size={13} color="#6b7280" /> Print
                 </button>
               </>
             )}
@@ -382,6 +424,16 @@ export default function Admissions() {
         <div style={{ width: 280, flexShrink: 0, background: "white", borderRadius: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6", display: "flex", flexDirection: "column", overflowY: "auto" }}>
           <PanelContent />
         </div>
+      )}
+
+      {showImportModal && (
+        <ImportModal
+          title="Import Applications"
+          templateHeaders={["Applicant Name", "Gender", "Age", "Class Applied For", "Parent Name", "Parent Phone"]}
+          templateFilename="admissions_template"
+          onClose={() => setShowImportModal(false)}
+          onImport={() => { setShowImportModal(false); showToast("Applications imported successfully!", "success"); }}
+        />
       )}
 
       {/* Mobile bottom sheet panel */}

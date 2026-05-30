@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Plus, Search, ChevronRight, X, Phone, Mail, MapPin, Star, Calendar, BookOpen } from "lucide-react";
+import { Plus, Search, ChevronRight, X, Phone, Mail, MapPin, Star, Calendar, BookOpen, Download, Printer, Upload } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useWindowSize } from "../hooks/useWindowSize";
+import ImportModal from "../components/ImportModal";
+import { exportToCSV } from "../utils/csvExport";
+import { printHTML } from "../utils/printUtils";
 
 type StaffMember = {
   id: number; name: string; staffId: string; role: string; department: string;
@@ -45,6 +48,43 @@ export default function Staff() {
   const [searchQuery,setSearchQuery] = useState("");
   const [deptFilter, setDeptFilter]  = useState("All");
   const [showPanel,  setShowPanel]   = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+
+  const handleExport = () => {
+    const rows = filtered.map((s) => ({
+      "Staff ID":      s.staffId,
+      "Name":          s.name,
+      "Role":          s.role,
+      "Department":    s.department,
+      "Email":         s.email,
+      "Phone":         s.phone,
+      "Gender":        s.gender,
+      "Join Date":     s.joinDate,
+      "Qualification": s.qualification,
+      "Experience":    s.experience,
+      "Status":        s.status,
+      "Attendance":    s.attendance,
+    }));
+    exportToCSV("staff_export", rows);
+    showToast(`${rows.length} staff records exported to CSV`, "success");
+  };
+
+  const handlePrint = () => {
+    const rows = filtered.map((s) =>
+      `<tr><td>${s.staffId}</td><td>${s.name}</td><td>${s.role}</td><td>${s.department}</td><td>${s.phone}</td><td>${s.status}</td></tr>`
+    ).join("");
+    printHTML(`
+      <h2 style="margin:0 0 10px;font-size:16px;">Staff Directory — Happy Kids Basic School</h2>
+      <p style="margin:0 0 14px;font-size:12px;color:#666;">Academic Year 2025/2026 · Generated ${new Date().toLocaleDateString("en-GB")}</p>
+      <table border="1" cellpadding="7" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead style="background:#ede9fe;"><tr>
+          <th>Staff ID</th><th>Name</th><th>Role</th><th>Department</th><th>Phone</th><th>Status</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p style="margin:14px 0 0;font-size:11px;color:#999;">Total: ${filtered.length} staff members</p>
+    `);
+  };
 
   const filtered = staff.filter((s) => {
     const mSearch = !searchQuery || s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.role.toLowerCase().includes(searchQuery.toLowerCase());
@@ -186,11 +226,19 @@ export default function Staff() {
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           {!isMobile && (
-            <button onClick={() => showToast("Generating staff report...", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
-              📊 Staff Report
-            </button>
+            <>
+              <button onClick={() => setShowImportModal(true)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                <Upload size={13} color="#6b7280" /> Import
+              </button>
+              <button onClick={handleExport} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                <Download size={13} color="#6b7280" /> Export
+              </button>
+              <button onClick={handlePrint} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                <Printer size={13} color="#6b7280" /> Print
+              </button>
+            </>
           )}
-          <button onClick={() => showToast("Opening add staff form...", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 14px", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#7c3aed,#6d28d9)", cursor: "pointer", fontSize: 12.5, fontWeight: 600, color: "white" }}>
+          <button onClick={() => showToast("Add staff form coming soon", "info")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 14px", border: "none", borderRadius: 8, background: "linear-gradient(135deg,#7c3aed,#6d28d9)", cursor: "pointer", fontSize: 12.5, fontWeight: 600, color: "white" }}>
             <Plus size={14} />{!isMobile && " Add Staff"}
           </button>
         </div>
@@ -269,6 +317,16 @@ export default function Staff() {
         {/* Detail panel */}
         {(!isMobile || showPanel) && <StaffPanel />}
       </div>
+
+      {showImportModal && (
+        <ImportModal
+          title="Import Staff Members"
+          templateHeaders={["Name", "Role", "Department", "Email", "Phone", "Gender", "Qualification", "Status"]}
+          templateFilename="staff_template"
+          onClose={() => setShowImportModal(false)}
+          onImport={() => { setShowImportModal(false); showToast("Staff records imported successfully!", "success"); }}
+        />
+      )}
 
       {/* Mobile bottom sheet */}
       {isMobile && showPanel && (
