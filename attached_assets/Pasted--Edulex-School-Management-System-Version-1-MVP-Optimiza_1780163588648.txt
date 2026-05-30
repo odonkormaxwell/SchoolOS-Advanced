@@ -1,0 +1,836 @@
+# Edulex School Management System - Version 1 MVP Optimization & Stabilization
+
+## Project Overview
+
+You are working on Edulex, a modern School Management System SaaS built for Basic Schools, Primary Schools, and Junior High Schools in Ghana.
+
+The current system functions more like a prototype than a production-ready SaaS. Several modules appear unfinished, buttons are not functioning correctly, reports are messy, settings are not wired properly, and the overall user experience feels overly complex.
+
+Your goal is to transform the system into a clean, premium, modern MVP suitable for onboarding real schools.
+
+---
+
+# PHASE 1: SIMPLIFY THE SIDEBAR
+
+The current sidebar contains too many modules and overwhelms users.
+
+Reduce the visible navigation to only the core modules schools actually need for daily operations.
+
+## Final Sidebar Structure
+
+Dashboard
+
+Students
+
+* All Students
+* Admissions
+* Attendance
+
+Academics
+
+* Subjects
+* Classes
+* Timetable
+* Assessments
+
+Fees
+
+* Fee Structure
+* Invoices
+* Payments
+* Balances
+
+Communication
+
+* Announcements
+* SMS
+* WhatsApp
+* Email
+
+Staff
+
+* Staff Directory
+* Roles & Permissions
+
+Reports
+
+Settings
+
+---
+
+## Remove From Sidebar
+
+Hide the following modules completely from the Version 1 sidebar:
+
+* Health Records
+* Discipline
+* Homework
+* Exams
+* Results
+* Gradebook
+* Report Cards
+* Billing
+* Expenses
+* Scholarships
+* Financial Reports
+* Communication Hub
+* Notices
+* Events
+* Payroll
+* Transport
+* Feeding
+* Inventory
+* Library
+* All Reports
+
+Do not delete the underlying code.
+
+Only remove them from the visible navigation.
+
+They may be reintroduced later as premium modules.
+
+---
+
+# PHASE 2: MERGE RELATED FEATURES
+
+## Assessments Module
+
+Merge:
+
+* Homework
+* Exams
+* Results
+* Gradebook
+* Report Cards
+
+Into:
+
+Assessments
+
+Sub-sections:
+
+* Homework
+* Class Tests
+* Mid-Term Exams
+* End-Term Exams
+* Gradebook
+* Results
+* Report Cards
+
+---
+
+## Fees Module
+
+Merge:
+
+* Billing
+* Payments
+* Invoices
+* Scholarships
+* Financial Reports
+
+Into:
+
+Fees
+
+Sub-sections:
+
+* Fee Structure
+* Invoices
+* Payments
+* Balances
+
+---
+
+## Communication Module
+
+Merge:
+
+* Communication Hub
+* Notices
+* SMS
+* WhatsApp
+* Email
+* Events
+
+Into:
+
+Communication
+
+Sub-sections:
+
+* Announcements
+* SMS
+* WhatsApp
+* Email
+
+---
+
+## Staff Module
+
+Merge:
+
+* Staff
+* Payroll
+
+Into:
+
+Staff
+
+Sub-sections:
+
+* Staff Directory
+* Roles & Permissions
+
+Payroll should be hidden for Version 1.
+
+---
+
+# PHASE 3: FIX ALL BUTTONS
+
+Perform a complete audit of the system.
+
+No button should do nothing.
+
+Audit all:
+
+* Print
+* Export
+* Import
+* Generate
+* Save
+* Submit
+* Download
+* Search
+* Filter
+* Add New
+* Edit
+* Delete
+* View
+* Send
+* Approve
+* Publish
+
+If functionality exists:
+
+Wire it properly.
+
+If functionality does not yet exist:
+
+Display a professional toast notification or modal:
+
+"Feature coming soon."
+
+Never leave users clicking dead buttons.
+
+---
+
+# PHASE 4: PRINT FUNCTIONALITY
+
+Ensure Print works for:
+
+* Student List
+* Admissions
+* Attendance Reports
+* Invoices
+* Receipts
+* Report Cards
+* Financial Reports
+
+Print should print only the selected content.
+
+Not the entire dashboard.
+
+Open browser print dialog correctly.
+
+---
+
+# PHASE 5: EXPORT FUNCTIONALITY
+
+Support CSV export immediately for:
+
+* Students
+* Staff
+* Admissions
+* Attendance
+* Invoices
+* Payments
+* Reports
+
+If PDF export is unavailable:
+
+Show:
+
+"PDF export coming soon."
+
+---
+
+# PHASE 6: IMPORT FUNCTIONALITY
+
+All Import buttons should open a professional import modal.
+
+Import modal should contain:
+
+* Upload File
+* Download Sample Template
+* Instructions
+* Cancel
+* Import
+
+If processing is not ready:
+
+Display:
+
+"Import processing coming soon."
+
+Never leave the Import button inactive.
+
+---
+
+# PHASE 7: GENERATE FUNCTIONALITY
+
+Generate buttons should work for:
+
+* Report Cards
+* Invoices
+* Receipts
+* Student IDs
+* Admission Letters
+* Reports
+
+If unavailable:
+
+Show proper notification.
+
+---
+
+# PHASE 8: PREMIUM REPORTS REDESIGN
+
+The current Reports page looks cluttered.
+
+Completely redesign it.
+
+## Reports Layout
+
+### Header
+
+Title: Reports
+
+Subtitle:
+
+View, generate, print, and export school reports.
+
+Filters:
+
+* Academic Year
+* Term
+* Class
+* Date Range
+
+Buttons:
+
+* Export
+* Print
+
+---
+
+## Summary Cards
+
+Display:
+
+* Total Students
+* Total Staff
+* Attendance Rate
+* Fees Collected
+* Outstanding Balances
+* Published Results
+
+Use modern KPI cards.
+
+---
+
+## Student Reports
+
+Cards:
+
+* Student List
+* Admissions Report
+* Attendance Report
+* Class List
+
+---
+
+## Academic Reports
+
+Cards:
+
+* Assessment Report
+* Exam Results
+* Report Cards
+* Subject Performance
+
+---
+
+## Finance Reports
+
+Cards:
+
+* Fee Collection Report
+* Outstanding Balances
+* Payment History
+* Invoice Report
+
+---
+
+## Staff Reports
+
+Cards:
+
+* Staff Directory
+* Teacher Assignment Report
+
+---
+
+Each card should contain:
+
+* Title
+* Description
+* View
+* Export
+* Print
+
+---
+
+## Recent Reports Table
+
+Columns:
+
+* Report Name
+* Category
+* Generated By
+* Date
+* Status
+* Action
+
+---
+
+## UI Requirements
+
+Use:
+
+* Premium cards
+* Soft shadows
+* Rounded corners
+* Empty states
+* Loading states
+* Responsive layouts
+* Modern tables
+* Toast notifications
+
+The page should feel like a premium SaaS product.
+
+---
+
+# PHASE 9: SETTINGS SCREEN
+
+Fully wire all settings.
+
+## School Profile
+
+* School Name
+* Logo
+* Address
+* Phone
+* Email
+* Website
+* Motto
+
+---
+
+## Academic Settings
+
+* Academic Year
+* Current Term
+* Grading System
+* Promotion Rules
+
+---
+
+## Users & Permissions
+
+* Roles
+* Permissions
+* Parent Access
+* Student Access
+
+---
+
+## Fees Settings
+
+* Currency (GHS)
+* Fee Categories
+* Receipt Settings
+* Invoice Settings
+
+---
+
+## Communication Settings
+
+* SMS Settings
+* WhatsApp Settings
+* Email Settings
+
+---
+
+## Appearance Settings
+
+* Logo
+* Theme
+* Sidebar Preferences
+
+---
+
+## System Settings
+
+* Date Format
+* Time Zone
+* Backup
+* Data Export
+
+---
+
+## Save Behavior
+
+Every Save button must:
+
+* Validate inputs
+* Save data
+* Show success notification
+
+Never leave Save buttons inactive.
+
+---
+
+# PHASE 10: ROLE SYSTEM
+
+Internal Roles:
+
+1. Administrator
+2. Teacher
+3. Accountant
+4. Admissions Officer
+
+External Roles:
+
+5. Parent
+6. Student
+
+---
+
+## Administrator
+
+Full access.
+
+Can access:
+
+* Dashboard
+* Students
+* Academics
+* Fees
+* Communication
+* Staff
+* Reports
+* Settings
+
+---
+
+## Teacher
+
+Can access:
+
+* Dashboard
+* Students (assigned classes)
+* Attendance
+* Academics
+* Assessments
+* Academic Reports
+
+Cannot access:
+
+* Fees
+* Staff
+* Settings
+
+---
+
+## Accountant
+
+Can access:
+
+* Dashboard
+* Students (view only)
+* Fees
+* Finance Reports
+
+Cannot access:
+
+* Academics
+* Assessments
+* Settings
+
+---
+
+## Admissions Officer
+
+Can access:
+
+* Dashboard
+* Students
+* Admissions
+* Communication
+* Admissions Reports
+
+Cannot access:
+
+* Fees
+* Settings
+* Staff
+
+---
+
+# PHASE 11: PERMISSION SYSTEM
+
+Implement granular permissions:
+
+* manage_students
+* manage_admissions
+* manage_attendance
+* manage_assessments
+* manage_fees
+* manage_staff
+* view_reports
+* manage_communication
+* manage_settings
+* manage_roles_permissions
+
+Permissions should override role defaults when granted.
+
+---
+
+# PHASE 12: DEMO SCHOOL DATA
+
+Create Demo School:
+
+Name:
+Edulex Demonstration School
+
+Location:
+Accra, Ghana
+
+Currency:
+GHS
+
+Academic Year:
+2025/2026
+
+Current Term:
+Term 2
+
+---
+
+# PHASE 13: DEMO USERS
+
+Seed realistic Ghanaian users.
+
+## Administrator
+
+Name:
+Kofi Mensah
+
+Email:
+[admin@edulex.com.gh](mailto:admin@edulex.com.gh)
+
+Password:
+password123
+
+---
+
+## Headteacher
+
+Name:
+Akosua Owusu
+
+Email:
+[headteacher@edulex.com.gh](mailto:headteacher@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Administrator
+
+---
+
+## Teacher
+
+Name:
+Ama Owusu
+
+Email:
+[ama.owusu@edulex.com.gh](mailto:ama.owusu@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Teacher
+
+---
+
+## Teacher
+
+Name:
+Kwame Asante
+
+Email:
+[kwame.asante@edulex.com.gh](mailto:kwame.asante@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Teacher
+
+---
+
+## Accountant
+
+Name:
+Yaw Boateng
+
+Email:
+[accounts@edulex.com.gh](mailto:accounts@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Accountant
+
+---
+
+## Admissions Officer
+
+Name:
+Abena Nyarko
+
+Email:
+[admissions@edulex.com.gh](mailto:admissions@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Admissions Officer
+
+---
+
+## Parent
+
+Name:
+Grace Ofori
+
+Email:
+[parent.demo@edulex.com.gh](mailto:parent.demo@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Parent
+
+---
+
+## Student
+
+Name:
+Michael Ofori
+
+Email:
+[student.demo@edulex.com.gh](mailto:student.demo@edulex.com.gh)
+
+Password:
+password123
+
+Role:
+Student
+
+---
+
+# PHASE 14: DEMO DATA
+
+Seed:
+
+* 30 Students
+* 6 Teachers
+* KG to JHS Classes
+* 8 Subjects
+* Attendance Records
+* Fee Structures
+* Invoices
+* Payments
+* Admissions
+* Report Cards
+* Staff Records
+* Announcements
+
+Use realistic Ghanaian names.
+
+Ensure dashboards, reports, and analytics contain realistic data.
+
+---
+
+# PHASE 15: DEVELOPMENT MODE TESTING PAGE
+
+Create:
+
+Developer → Demo Credentials
+
+Visible only in development mode.
+
+Display:
+
+* User Name
+* Role
+* Email
+* Password
+* Permissions
+
+Automatically disable in production.
+
+---
+
+# FINAL QUALITY ASSURANCE
+
+Before marking complete:
+
+Test:
+
+* Login
+* Logout
+* Role Permissions
+* Sidebar Visibility
+* Reports
+* Print
+* Export
+* Import
+* Generate
+* Save Settings
+* Search
+* Filters
+* Mobile Responsiveness
+* Empty States
+* Loading States
+* Notifications
+
+The final product should feel like a polished commercial SaaS product suitable for onboarding real schools in Ghana, not a prototype.
