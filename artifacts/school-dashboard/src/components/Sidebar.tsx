@@ -6,7 +6,7 @@ import {
   MessageSquare, MessageCircle, Mail, Bell, Calendar, Settings,
   ChevronRight, ChevronDown, GraduationCap, Bus, Utensils,
   Package, Library, ClipboardList, BookMarked, Star, BarChart,
-  DollarSign, Send, Hash,
+  DollarSign, Send, Hash, UserCog, Briefcase,
 } from "lucide-react";
 
 type NavItem = { label: string; icon: React.ReactNode; page: string; hasChildren?: boolean; };
@@ -57,6 +57,13 @@ const navSections: NavSection[] = [
       { label: "WhatsApp", icon: <MessageCircle size={14} />, page: "whatsapp" },
       { label: "Email", icon: <Mail size={14} />, page: "email" },
       { label: "Events", icon: <Calendar size={14} />, page: "events" },
+    ],
+  },
+  {
+    section: "HR",
+    items: [
+      { label: "Staff", icon: <UserCog size={14} />, page: "staff" },
+      { label: "Payroll", icon: <Banknote size={14} />, page: "payroll" },
     ],
   },
   {

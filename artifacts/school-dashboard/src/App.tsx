@@ -26,6 +26,12 @@ import Transport from "./pages/Transport";
 import Timetable from "./pages/Timetable";
 import ReportCards from "./pages/ReportCards";
 import HealthRecords from "./pages/HealthRecords";
+import Exams from "./pages/Exams";
+import Discipline from "./pages/Discipline";
+import Staff from "./pages/Staff";
+import Library from "./pages/Library";
+import Homework from "./pages/Homework";
+import Events from "./pages/Events";
 import { kpiCards } from "./data/staticData";
 
 interface ToastState { id: number; message: string; type: ToastType; }
@@ -110,6 +116,12 @@ export default function App() {
       case "timetable":         return <Timetable />;
       case "report-cards":      return <ReportCards />;
       case "health":            return <HealthRecords />;
+      case "exams":             return <Exams />;
+      case "discipline":        return <Discipline />;
+      case "staff":             return <Staff />;
+      case "library-ops":       return <Library />;
+      case "homework":          return <Homework />;
+      case "events":            return <Events />;
       default:                  return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
     }
   };
