@@ -32,6 +32,18 @@ import Staff from "./pages/Staff";
 import Library from "./pages/Library";
 import Homework from "./pages/Homework";
 import Events from "./pages/Events";
+import Subjects from "./pages/Subjects";
+import Invoices from "./pages/Invoices";
+import Notices from "./pages/Notices";
+import Expenses from "./pages/Expenses";
+import Results from "./pages/Results";
+import Inventory from "./pages/Inventory";
+import Payments from "./pages/Payments";
+import Feeding from "./pages/Feeding";
+import Payroll from "./pages/Payroll";
+import Classes from "./pages/Classes";
+import Scholarships from "./pages/Scholarships";
+import FinancialReports from "./pages/FinancialReports";
 import { kpiCards } from "./data/staticData";
 
 interface ToastState { id: number; message: string; type: ToastType; }
@@ -122,6 +134,18 @@ export default function App() {
       case "library-ops":       return <Library />;
       case "homework":          return <Homework />;
       case "events":            return <Events />;
+      case "subjects":          return <Subjects />;
+      case "invoices":          return <Invoices />;
+      case "notices":           return <Notices />;
+      case "expenses":          return <Expenses />;
+      case "results":           return <Results />;
+      case "inventory":         return <Inventory />;
+      case "payments":          return <Payments />;
+      case "feeding":           return <Feeding />;
+      case "payroll":           return <Payroll />;
+      case "classes":           return <Classes />;
+      case "scholarships":      return <Scholarships />;
+      case "financial-reports": return <FinancialReports />;
       default:                  return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
     }
   };
