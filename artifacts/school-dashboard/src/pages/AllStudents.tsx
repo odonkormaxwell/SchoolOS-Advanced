@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Download, Upload, Plus, Search, ChevronDown, Filter, RotateCcw, MoreVertical, ChevronLeft, ChevronRight, Users, GraduationCap, UserCheck, X, Phone, Mail } from "lucide-react";
+import { Download, Upload, Plus, Search, ChevronDown, RotateCcw, MoreVertical, ChevronLeft, ChevronRight, Users, GraduationCap, UserCheck, X, Phone, Printer } from "lucide-react";
 import { studentsKpiCards, students } from "../data/studentsData";
 import { useApp } from "../context/AppContext";
 import { useWindowSize } from "../hooks/useWindowSize";
+import ImportModal from "../components/ImportModal";
+import { exportToCSV } from "../utils/csvExport";
+import { printHTML } from "../utils/printUtils";
 
 const iconMap: Record<string, React.ReactNode> = {
   students: <Users size={20} />,
@@ -25,6 +28,7 @@ export default function AllStudents() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<typeof students[0] | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [menuOpen, setMenuOpen] = useState<number | null>(null);
@@ -49,8 +53,41 @@ export default function AllStudents() {
     showToast("Student added successfully!", "success");
   };
 
-  const handleImport = () => showToast("Import file ready. Select your CSV or Excel file.", "info");
-  const handleExport = () => showToast("Exporting 1,248 student records to Excel...", "success");
+  const handleImport = () => setShowImportModal(true);
+
+  const handleExport = () => {
+    const rows = filteredStudents.map((s) => ({
+      "Student ID": s.studentId,
+      "Admission No": s.admissionNo,
+      "Full Name": s.name,
+      "Gender": s.gender,
+      "Age": s.age,
+      "Class": s.class,
+      "House": s.house,
+      "Date of Birth": s.dob,
+      "Parent/Guardian": s.parent,
+      "Parent Phone": s.parentPhone,
+      "Status": s.status,
+    }));
+    exportToCSV("students_export", rows);
+    showToast(`${rows.length} student records exported to CSV`, "success");
+  };
+
+  const handlePrint = () => {
+    const rows = filteredStudents.map((s) =>
+      `<tr><td>${s.studentId}</td><td>${s.name}</td><td>${s.class}</td><td>${s.gender}</td><td>${s.dob}</td><td>${s.parent}</td><td>${s.parentPhone}</td><td>${s.status}</td></tr>`
+    ).join("");
+    printHTML(`
+      <div class="header">
+        <div><h1>Student List</h1><div class="school">Happy Kids Basic School · Academic Year 2025/2026</div></div>
+        <div class="school">Printed: ${new Date().toLocaleDateString("en-GB")}</div>
+      </div>
+      <table>
+        <thead><tr><th>Student ID</th><th>Full Name</th><th>Class</th><th>Gender</th><th>Date of Birth</th><th>Parent/Guardian</th><th>Phone</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `, "Student List");
+  };
 
   const kpiCols = isMobile ? "repeat(2, 1fr)" : isTablet ? "repeat(3, 1fr)" : "repeat(5, 1fr)";
 
@@ -79,6 +116,9 @@ export default function AllStudents() {
               </button>
               <button onClick={handleExport} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
                 <Download size={13} color="#6b7280" /> Export
+              </button>
+              <button onClick={handlePrint} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 12.5, fontWeight: 500, color: "#374151" }}>
+                <Printer size={13} color="#6b7280" /> Print
               </button>
             </>
           )}
@@ -335,6 +375,24 @@ export default function AllStudents() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <ImportModal
+          title="Students"
+          templateFilename="students"
+          templateHeaders={["Full Name", "Gender", "Date of Birth", "Class", "House", "Parent/Guardian", "Parent Phone"]}
+          instructions={[
+            "Download the sample template and open it in Excel or Google Sheets.",
+            "Fill in one row per student. Do not change the column headers.",
+            "Save as CSV (.csv) or Excel (.xlsx) format.",
+            "Upload the file below and click Import.",
+            "Duplicate student IDs will be skipped automatically.",
+          ]}
+          onClose={() => setShowImportModal(false)}
+          onImport={() => showToast("Students imported successfully!", "success")}
+        />
       )}
     </div>
   );

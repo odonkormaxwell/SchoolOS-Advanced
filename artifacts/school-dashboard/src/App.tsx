@@ -17,7 +17,7 @@ import TransportStatus from "./components/TransportStatus";
 import TodaySchedule from "./components/TodaySchedule";
 import EventsCalendar from "./components/EventsCalendar";
 
-// Pages — V1 sidebar
+// V1 sidebar pages
 import AllStudents from "./pages/AllStudents";
 import Admissions from "./pages/Admissions";
 import Attendance from "./pages/Attendance";
@@ -35,9 +35,11 @@ import WhatsApp from "./pages/WhatsApp";
 import Email from "./pages/Email";
 import Staff from "./pages/Staff";
 import RolesPermissions from "./pages/RolesPermissions";
-import AllReports from "./pages/AllReports";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
+import DevCredentials from "./pages/DevCredentials";
 
-// Hidden pages (still accessible via direct navigation / redirects)
+// Hidden / legacy pages (kept for compat, not in sidebar)
 import Gradebook from "./pages/Gradebook";
 import Billing from "./pages/Billing";
 import CommunicationHub from "./pages/CommunicationHub";
@@ -66,7 +68,6 @@ function DashboardPage() {
   const { isMobile, isTablet } = useWindowSize();
   const cols3 = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1fr 1fr 320px";
   const cols3eq = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1fr 1fr 1fr";
-
   return (
     <>
       <DashboardHeader />
@@ -108,6 +109,24 @@ function ComingSoon({ label }: { label: string }) {
   );
 }
 
+// Route redirects — old paths map to new merged modules
+const redirects: Record<string, string> = {
+  "homework":          "assessments",
+  "exams":             "assessments",
+  "results":           "assessments",
+  "gradebook":         "assessments",
+  "report-cards":      "assessments",
+  "billing":           "fee-structure",
+  "financial-reports": "reports",
+  "expenses":          "reports",
+  "scholarships":      "fee-structure",
+  "communication-hub": "announcements",
+  "notices":           "announcements",
+  "events":            "announcements",
+  "all-reports":       "reports",
+  "payroll":           "staff",
+};
+
 export default function App() {
   const [activePage, setActivePage] = useState("dashboard");
   const [toasts, setToasts] = useState<ToastState[]>([]);
@@ -117,23 +136,6 @@ export default function App() {
   const sidebarWidth = isMobile ? 0 : isTablet ? 64 : 220;
 
   const onNavigate = useCallback((page: string) => {
-    // Redirect old routes to merged modules
-    const redirects: Record<string, string> = {
-      "homework":          "assessments",
-      "exams":             "assessments",
-      "results":           "assessments",
-      "gradebook":         "assessments",
-      "report-cards":      "assessments",
-      "billing":           "fee-structure",
-      "financial-reports": "reports",
-      "expenses":          "reports",
-      "scholarships":      "fee-structure",
-      "communication-hub": "announcements",
-      "notices":           "announcements",
-      "events":            "announcements",
-      "all-reports":       "reports",
-      "payroll":           "staff",
-    };
     setActivePage(redirects[page] ?? page);
     window.scrollTo(0, 0);
   }, []);
@@ -149,43 +151,35 @@ export default function App() {
 
   const renderPage = () => {
     switch (activePage) {
-      // Dashboard
       case "dashboard":         return <DashboardPage />;
-
       // Students
       case "all-students":      return <AllStudents />;
       case "admissions":        return <Admissions />;
       case "attendance":        return <Attendance />;
-
       // Academics
       case "subjects":          return <Subjects />;
       case "classes":           return <Classes />;
       case "timetable":         return <Timetable />;
       case "assessments":       return <Assessments />;
-
       // Fees
       case "fee-structure":     return <FeeStructure />;
       case "invoices":          return <Invoices />;
       case "payments":          return <Payments />;
       case "balances":          return <Balances />;
-
       // Communication
       case "announcements":     return <AnnouncementsPage />;
       case "sms":               return <SMS />;
       case "whatsapp":          return <WhatsApp />;
       case "email":             return <Email />;
-
       // Staff
       case "staff":             return <Staff />;
       case "roles-permissions": return <RolesPermissions />;
-
-      // Reports
-      case "reports":           return <AllReports />;
-
-      // Settings
-      case "settings":          return <ComingSoon label="Settings" />;
-
-      // Hidden pages — kept for compatibility but not in sidebar
+      // Reports & Settings
+      case "reports":           return <Reports />;
+      case "settings":          return <Settings />;
+      // Dev tools (visible only in dev mode)
+      case "dev-credentials":   return <DevCredentials />;
+      // Legacy hidden pages
       case "health":            return <HealthRecords />;
       case "discipline":        return <Discipline />;
       case "transport":         return <Transport />;
@@ -193,7 +187,18 @@ export default function App() {
       case "feeding":           return <Feeding />;
       case "inventory":         return <Inventory />;
       case "payroll":           return <Payroll />;
-
+      case "gradebook":         return <Gradebook />;
+      case "billing":           return <Billing />;
+      case "communication-hub": return <CommunicationHub />;
+      case "report-cards":      return <ReportCards />;
+      case "exams":             return <Exams />;
+      case "homework":          return <Homework />;
+      case "events":            return <Events />;
+      case "notices":           return <Notices />;
+      case "expenses":          return <Expenses />;
+      case "results":           return <Results />;
+      case "scholarships":      return <Scholarships />;
+      case "financial-reports": return <FinancialReports />;
       default:
         return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
     }
@@ -222,15 +227,12 @@ export default function App() {
             userRole={userRole}
           />
         )}
-
         <div style={{ marginLeft: sidebarWidth, flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           <Topbar />
           <main style={{
             marginTop: 56,
             padding: isMobile ? "14px 12px 80px" : "20px 20px 30px",
-            flex: 1,
-            overflow: "auto",
-            minWidth: 0,
+            flex: 1, overflow: "auto", minWidth: 0,
           }}>
             {renderPage()}
           </main>

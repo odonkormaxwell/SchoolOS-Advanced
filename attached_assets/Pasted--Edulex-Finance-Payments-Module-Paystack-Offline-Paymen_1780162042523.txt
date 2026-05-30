@@ -1,0 +1,786 @@
+# Edulex Finance & Payments Module – Paystack + Offline Payments
+
+## Objective
+
+Build a complete Finance & Payments Module for Edulex.
+
+Edulex is a School Management SaaS for Basic Schools, Primary Schools, and Junior High Schools in Ghana.
+
+The finance module should support:
+
+1. Online payments through Paystack
+2. Offline/manual payment recording
+3. Parent fee payments
+4. Student invoices
+5. Automatic receipts
+6. Partial payments
+7. Accountant reconciliation
+8. Edulex subscription billing
+9. Multi-tenant school payment settings
+
+The final system should feel like a polished commercial SaaS product, not a prototype.
+
+---
+
+# 1. PAYMENT ARCHITECTURE
+
+Edulex is a multi-tenant SaaS.
+
+Each school should be able to connect its own Paystack account.
+
+Do not use one Paystack account for all schools.
+
+## School Fee Collection Flow
+
+Parent pays School.
+
+Payment should go directly into the school’s Paystack account.
+
+Example:
+
+Parent → School Paystack Account
+
+## Edulex Subscription Flow
+
+School pays Edulex.
+
+Payment should go into Edulex’s Paystack account.
+
+Example:
+
+School → Edulex Paystack Account
+
+These two payment flows must be kept separate.
+
+---
+
+# 2. PAYMENT SETTINGS
+
+Create:
+
+Settings → Payment Settings
+
+## Online Payments
+
+Fields:
+
+* Enable Online Payments toggle
+* Payment Provider
+* Paystack Public Key
+* Paystack Secret Key
+* Paystack Webhook Secret
+* Environment: Test / Live
+
+Buttons:
+
+* Test Connection
+* Save Settings
+
+Status:
+
+* Connected
+* Not Connected
+* Invalid Credentials
+
+## Future Payment Providers
+
+Add placeholders only:
+
+* Hubtel - Coming Soon
+* Flutterwave - Coming Soon
+* ExpressPay - Coming Soon
+* Bank Integration - Coming Soon
+
+---
+
+# 3. OFFLINE PAYMENT SETTINGS
+
+Create:
+
+Settings → Payment Settings → Offline Payment Methods
+
+Allow school admin to enable or disable offline payment methods.
+
+Default enabled methods:
+
+* Cash
+* Direct Mobile Money
+* Bank Deposit
+* Bank Transfer
+
+Optional method:
+
+* Cheque
+
+Each school should be able to decide which offline payment options appear when recording payments.
+
+---
+
+# 4. PAYMENT METHODS
+
+The payment methods dropdown should include:
+
+* Cash
+* Direct Mobile Money
+* Bank Deposit
+* Bank Transfer
+* Cheque
+* Paystack Online Payment
+
+If Paystack is not enabled, hide Paystack Online Payment from manual payment options.
+
+If Cheque is disabled, hide Cheque.
+
+---
+
+# 5. OFFLINE PAYMENT RECORDING
+
+Create:
+
+Finance → Record Payment
+
+The Accountant and Administrator should be able to record payments manually.
+
+## Common Fields
+
+* Student
+* Invoice
+* Fee Category
+* Amount Paid
+* Payment Method
+* Payment Date
+* Reference Number
+* Notes
+
+## If Payment Method = Cash
+
+Show:
+
+* Receipt Number
+* Received By
+
+## If Payment Method = Direct Mobile Money
+
+Show:
+
+* Network
+* Sender Name
+* Sender Mobile Number
+* Transaction ID
+
+Network options:
+
+* MTN Mobile Money
+* Telecel Cash
+* AirtelTigo Money
+
+## If Payment Method = Bank Deposit
+
+Show:
+
+* Bank Name
+* Deposit Slip Number
+* Depositor Name
+* Deposit Date
+
+## If Payment Method = Bank Transfer
+
+Show:
+
+* Bank Name
+* Account Name
+* Transaction Reference
+* Transfer Date
+
+## If Payment Method = Cheque
+
+Show:
+
+* Bank Name
+* Cheque Number
+* Cheque Date
+* Clearance Status
+
+Clearance Status:
+
+* Pending Clearance
+* Cleared
+* Rejected
+
+---
+
+# 6. OFFLINE PAYMENT APPROVAL WORKFLOW
+
+For better financial control, add optional approval.
+
+Settings:
+
+Require approval for offline payments: Yes / No
+
+If enabled:
+
+Payment status should first be:
+
+Pending Approval
+
+Then Administrator or Accountant with permission can:
+
+* Approve Payment
+* Reject Payment
+
+When approved:
+
+* Update invoice balance
+* Generate receipt
+* Update student payment history
+
+When rejected:
+
+* Keep invoice unpaid
+* Log rejection reason
+
+---
+
+# 7. ONLINE PAYMENT THROUGH PAYSTACK
+
+Paystack should support:
+
+* Mobile Money
+* Card
+* Bank Transfer
+* USSD
+* QR Payment, if available
+
+Payment should be available from:
+
+* Parent Portal
+* Student Invoice Page
+* Accountant Invoice Page
+
+Buttons:
+
+* Pay Now
+* Copy Payment Link
+* Send Payment Link
+
+---
+
+# 8. PAY NOW WORKFLOW
+
+When Pay Now is clicked:
+
+1. Generate unique invoice payment reference.
+2. Initialize Paystack transaction.
+3. Redirect or open Paystack checkout.
+4. Parent completes payment.
+5. Redirect back to Edulex.
+6. Verify transaction from backend.
+7. Process Paystack webhook.
+8. Mark invoice as paid or partially paid.
+9. Update student balance.
+10. Generate receipt.
+11. Notify parent and accountant.
+
+Never mark payment as successful without Paystack verification.
+
+---
+
+# 9. PAYMENT LINKS
+
+Allow Accountant and Administrator to generate payment links.
+
+Example:
+
+Invoice:
+Term 2 School Fees
+
+Amount:
+GHS 1,200
+
+Payment Link:
+https://edulex.com/pay/INV-00023
+
+Actions:
+
+* Copy Link
+* Send via SMS
+* Send via WhatsApp
+* Send via Email
+
+If Paystack is disabled, hide payment link generation.
+
+---
+
+# 10. PARTIAL PAYMENTS
+
+Support partial payments for both online and offline payments.
+
+Example:
+
+Invoice Amount:
+GHS 1,200
+
+Payment 1:
+GHS 400
+
+Balance:
+GHS 800
+
+Payment 2:
+GHS 500
+
+Balance:
+GHS 300
+
+Status:
+Partially Paid
+
+Payment 3:
+GHS 300
+
+Balance:
+GHS 0
+
+Status:
+Paid
+
+Invoice statuses:
+
+* Pending
+* Partially Paid
+* Paid
+* Overdue
+* Cancelled
+
+---
+
+# 11. RECEIPTS
+
+Generate receipts for all payment types.
+
+This includes:
+
+* Paystack payments
+* Cash payments
+* Direct Mobile Money payments
+* Bank deposits
+* Bank transfers
+* Cheque payments after clearance
+
+Receipt should include:
+
+* School Logo
+* School Name
+* Receipt Number
+* Student Name
+* Student ID
+* Class
+* Invoice Number
+* Fee Category
+* Amount Paid
+* Balance
+* Payment Method
+* Reference Number
+* Received By
+* Payment Date
+* Printed Date
+
+Actions:
+
+* Print
+* Download PDF
+* Email Receipt
+* Send via WhatsApp, if enabled
+
+---
+
+# 12. PAYMENT HISTORY
+
+Create:
+
+Finance → Payment History
+
+Columns:
+
+* Date
+* Student
+* Class
+* Invoice
+* Fee Category
+* Amount
+* Payment Method
+* Reference
+* Status
+* Recorded By
+* Action
+
+Filters:
+
+* Date Range
+* Class
+* Student
+* Payment Method
+* Status
+* Fee Category
+
+Actions:
+
+* View Receipt
+* Print Receipt
+* Download Receipt
+* Reverse Payment, admin only
+
+---
+
+# 13. PAYMENT REVERSAL
+
+Add controlled payment reversal.
+
+Only Administrator or permitted Accountant can reverse a payment.
+
+When reversing:
+
+Require:
+
+* Reason
+* Confirmation
+
+System should:
+
+* Restore invoice balance
+* Mark receipt as reversed
+* Log audit trail
+* Keep original payment record for accountability
+
+Do not delete payment records permanently.
+
+---
+
+# 14. FINANCE DASHBOARD
+
+Create a premium Finance Dashboard.
+
+Cards:
+
+* Total Fees Expected
+* Total Collected
+* Outstanding Balance
+* Online Payments
+* Offline Payments
+* Pending Approvals
+* Failed Transactions
+
+Charts:
+
+* Collections by Month
+* Online vs Offline Payments
+* Payment Method Breakdown
+* Outstanding Fees by Class
+
+---
+
+# 15. RECONCILIATION
+
+Create:
+
+Finance → Reconciliation
+
+Purpose:
+
+Help accountants compare expected payments with actual collections.
+
+Sections:
+
+* Paystack Transactions
+* Offline Payments
+* Pending Approvals
+* Failed Payments
+* Reversed Payments
+* Outstanding Balances
+
+Filters:
+
+* Date Range
+* Payment Method
+* Status
+* Class
+
+Actions:
+
+* Match Payment
+* Verify Paystack Reference
+* Approve Offline Payment
+* Export CSV
+* Print Report
+
+---
+
+# 16. PAYSTACK WEBHOOKS
+
+Implement Paystack webhooks securely.
+
+Webhook events:
+
+* charge.success
+* refund.processed
+* transfer.success, future ready
+* transfer.failed, future ready
+
+On charge.success:
+
+* Verify transaction
+* Update invoice
+* Update student balance
+* Generate receipt
+* Log transaction
+* Notify parent
+* Notify accountant
+
+Create:
+
+Finance → Webhook Logs
+
+Fields:
+
+* Event
+* Reference
+* Status
+* Date
+* Response
+* Action
+
+---
+
+# 17. PAYSTACK TRANSACTION VERIFICATION
+
+Always verify transactions directly from backend.
+
+Use verification before:
+
+* Updating invoices
+* Generating receipts
+* Marking balances as paid
+* Sending receipt notifications
+
+---
+
+# 18. EDULEX SUBSCRIPTION BILLING
+
+Create a separate billing system for Edulex revenue.
+
+This is not the same as school fee collection.
+
+Create:
+
+Settings → Subscription
+
+or:
+
+Billing
+
+Schools should be able to pay Edulex subscriptions through Edulex’s own Paystack account.
+
+Plans:
+
+* Starter: GHS 99/month
+* Growth: GHS 199/month
+* Professional: GHS 399/month
+* Enterprise: Custom
+
+Subscription features:
+
+* Current Plan
+* Billing Cycle
+* Renewal Date
+* Subscription Status
+* Student Limit
+* Storage Limit
+* Billing History
+* Invoices
+* Receipts
+
+Actions:
+
+* Renew Subscription
+* Upgrade Plan
+* Downgrade Plan
+* Download Invoice
+* Download Receipt
+
+---
+
+# 19. SUPER ADMIN BILLING
+
+Create Super Admin billing dashboard.
+
+Show:
+
+* Total Edulex Revenue
+* Active Schools
+* Active Subscriptions
+* Expired Subscriptions
+* Failed Renewals
+* Monthly Recurring Revenue
+* Annual Revenue
+
+---
+
+# 20. ACCESS CONTROL
+
+## Administrator
+
+Can:
+
+* Configure payment settings
+* Record payments
+* Approve payments
+* Reverse payments
+* View all finance reports
+* Manage subscription
+
+## Accountant
+
+Can:
+
+* Record payments
+* View invoices
+* View payment history
+* Generate receipts
+* View finance reports
+
+Optional permission required for:
+
+* Approve offline payments
+* Reverse payments
+* Configure payment settings
+
+## Parent
+
+Can:
+
+* View outstanding fees
+* Pay online
+* Download receipts
+* View payment history
+
+## Student
+
+Can:
+
+* View fee status only, if enabled by school
+
+---
+
+# 21. SECURITY
+
+Implement:
+
+* Webhook signature validation
+* Secure storage of Paystack secret keys
+* Backend-only transaction verification
+* Audit logs for all payments
+* Payment reversal logs
+* Role-based access
+* Permission checks
+* CSRF protection
+
+Never expose secret keys in the frontend.
+
+---
+
+# 22. NOTIFICATIONS
+
+After successful payment, send notification to:
+
+* Parent
+* Accountant
+* Administrator, optional
+
+Notification channels:
+
+* Email
+* SMS
+* WhatsApp, future ready
+
+Example SMS:
+
+Payment of GHS 500 received for Michael Ofori. Receipt No: REC-00045. Thank you.
+
+---
+
+# 23. USER EXPERIENCE
+
+The finance module should feel premium and simple.
+
+Use:
+
+* Clean cards
+* Modern tables
+* Clear payment statuses
+* Receipt preview
+* Empty states
+* Loading states
+* Toast notifications
+* Confirmation modals
+* Mobile responsive layouts
+
+Avoid:
+
+* Dead buttons
+* Placeholder screens
+* Broken links
+* Complex layouts
+
+---
+
+# 24. FUTURE READY FEATURES
+
+Prepare structure only.
+
+Do not fully activate now.
+
+* Refunds
+* Vendor Payments
+* Staff Payouts
+* Teacher Allowances
+* Expense Management
+* Transfer Approvals
+* Multi-School Wallet
+* Hubtel
+* Flutterwave
+* ExpressPay
+
+Mark these as:
+
+Coming Soon
+
+---
+
+# 25. TESTING REQUIREMENTS
+
+Before completion, test:
+
+* Online payment enabled
+* Online payment disabled
+* Paystack test connection
+* Paystack checkout opens
+* Paystack transaction verifies
+* Paystack webhook works
+* Parent pays full invoice
+* Parent pays partial invoice
+* Accountant records cash payment
+* Accountant records direct MoMo payment
+* Accountant records bank deposit
+* Accountant records bank transfer
+* Cheque payment records correctly
+* Offline payment approval works
+* Receipt generation works
+* Invoice balance updates
+* Payment history updates
+* Finance reports update
+* Reconciliation page works
+* School subscription payment works
+* Role permissions work
+* Mobile responsiveness works
+
+The completed finance module should support how schools in Ghana actually collect money: online payments, cash payments, direct MoMo, bank deposits, and bank transfers.

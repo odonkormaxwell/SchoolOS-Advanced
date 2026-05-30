@@ -4,9 +4,11 @@ import {
   BookOpen, School, Clock, PenLine,
   Receipt, FileText, CreditCard, Wallet,
   Megaphone, MessageSquare, MessageCircle, Mail,
-  UserCog, Shield, BarChart2, Settings,
+  UserCog, Shield, BarChart2, Settings, Terminal,
   ChevronRight, ChevronDown, GraduationCap,
 } from "lucide-react";
+
+const isDev = import.meta.env.DEV;
 
 export type Permission =
   | "manage_students"
@@ -476,6 +478,34 @@ export default function Sidebar({
           </div>
         )}
       </div>
+
+      {/* Dev Credentials — only in development */}
+      {isDev && !compact && (
+        <div
+          onClick={() => onNavigate("dev-credentials")}
+          style={{
+            position: "absolute", bottom: 46, left: 0, right: 0,
+            padding: "6px 10px",
+            display: "flex",
+          }}
+        >
+          <div
+            style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "6px 12px",
+              borderRadius: 6, cursor: "pointer", fontSize: 11.5, fontWeight: 600,
+              color: activePage === "dev-credentials" ? "#fbbf24" : "#64748b",
+              background: activePage === "dev-credentials" ? "rgba(251,191,36,0.12)" : "transparent",
+              border: "1px dashed rgba(251,191,36,0.3)",
+              width: "100%", transition: "all 0.12s",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(251,191,36,0.1)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = activePage === "dev-credentials" ? "rgba(251,191,36,0.12)" : "transparent"; }}
+          >
+            <Terminal size={13} color="#fbbf24" />
+            <span style={{ color: "#fbbf24" }}>Dev Credentials</span>
+          </div>
+        </div>
+      )}
 
       {/* Settings */}
       {permissions.has("manage_settings") && (
