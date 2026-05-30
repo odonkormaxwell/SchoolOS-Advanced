@@ -5,7 +5,7 @@ import {
   Receipt, FileText, CreditCard, Wallet,
   Megaphone, MessageSquare, MessageCircle, Mail,
   UserCog, Shield, BarChart2, Settings, Terminal,
-  ChevronRight, ChevronDown, GraduationCap, TrendingUp, Scale,
+  ChevronRight, ChevronDown, GraduationCap, TrendingUp, Scale, Award,
 } from "lucide-react";
 
 const isDev = import.meta.env.DEV;
@@ -84,7 +84,8 @@ const navGroups: NavGroup[] = [
       { label: "Subjects",    icon: <BookOpen size={13} />, page: "subjects" },
       { label: "Classes",     icon: <School size={13} />,   page: "classes" },
       { label: "Timetable",   icon: <Clock size={13} />,    page: "timetable" },
-      { label: "Assessments", icon: <PenLine size={13} />,  page: "assessments" },
+      { label: "Assessments",       icon: <PenLine size={13} />, page: "assessments" },
+      { label: "Student Promotion", icon: <Award size={13} />,  page: "student-promotion", permission: "manage_assessments" as const },
     ],
   },
   {

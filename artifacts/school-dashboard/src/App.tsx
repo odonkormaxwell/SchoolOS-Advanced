@@ -49,6 +49,7 @@ import Reports from "./pages/Reports";
 import AllReports from "./pages/AllReports";
 import Settings from "./pages/Settings";
 import DevCredentials from "./pages/DevCredentials";
+import StudentPromotion from "./pages/StudentPromotion";
 import Profile from "./pages/Profile";
 import Security from "./pages/Security";
 
@@ -188,7 +189,8 @@ function AuthenticatedApp() {
       case "subjects":          return <Subjects />;
       case "classes":           return <Classes />;
       case "timetable":         return <Timetable />;
-      case "assessments":       return <Assessments />;
+      case "assessments":        return <Assessments />;
+      case "student-promotion":  return <StudentPromotion />;
       // Finance
       case "finance-dashboard": return <FinanceDashboard />;
       case "fee-structure":     return <FeeStructure />;
