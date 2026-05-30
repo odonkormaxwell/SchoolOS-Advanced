@@ -52,6 +52,8 @@ import DevCredentials from "./pages/DevCredentials";
 import StudentPromotion from "./pages/StudentPromotion";
 import Profile from "./pages/Profile";
 import Security from "./pages/Security";
+import ParentPortal from "./pages/ParentPortal";
+import StudentPortal from "./pages/StudentPortal";
 
 // Hidden / legacy pages (kept for compat, not in sidebar)
 import Gradebook from "./pages/Gradebook";
@@ -275,7 +277,7 @@ function AuthenticatedApp() {
 }
 
 export default function App() {
-  const { isAuthenticated, authView } = useAuth();
+  const { isAuthenticated, authView, user } = useAuth();
 
   if (!isAuthenticated) {
     if (authView === "register")        return <><GlobalStyles /><Register /></>;
@@ -283,6 +285,9 @@ export default function App() {
     if (authView === "2fa")             return <><GlobalStyles /><TwoFactor /></>;
     return <><GlobalStyles /><Login /></>;
   }
+
+  if (user?.roleKey === "parent")  return <ParentPortal />;
+  if (user?.roleKey === "student") return <StudentPortal />;
 
   return <AuthenticatedApp />;
 }
