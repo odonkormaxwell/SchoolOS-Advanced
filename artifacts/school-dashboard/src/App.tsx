@@ -23,6 +23,9 @@ import Gradebook from "./pages/Gradebook";
 import Billing from "./pages/Billing";
 import CommunicationHub from "./pages/CommunicationHub";
 import Transport from "./pages/Transport";
+import Timetable from "./pages/Timetable";
+import ReportCards from "./pages/ReportCards";
+import HealthRecords from "./pages/HealthRecords";
 import { kpiCards } from "./data/staticData";
 
 interface ToastState { id: number; message: string; type: ToastType; }
@@ -104,6 +107,9 @@ export default function App() {
       case "billing":           return <Billing />;
       case "communication-hub": return <CommunicationHub />;
       case "transport":         return <Transport />;
+      case "timetable":         return <Timetable />;
+      case "report-cards":      return <ReportCards />;
+      case "health":            return <HealthRecords />;
       default:                  return <ComingSoon label={activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} />;
     }
   };
