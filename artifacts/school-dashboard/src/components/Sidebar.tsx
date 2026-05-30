@@ -5,7 +5,7 @@ import {
   Receipt, FileText, CreditCard, Wallet,
   Megaphone, MessageSquare, MessageCircle, Mail,
   UserCog, Shield, BarChart2, Settings, Terminal,
-  ChevronRight, ChevronDown, GraduationCap,
+  ChevronRight, ChevronDown, GraduationCap, TrendingUp, Scale,
 } from "lucide-react";
 
 const isDev = import.meta.env.DEV;
@@ -74,14 +74,17 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: "Fees",
-    icon: <Receipt size={15} />,
+    label: "Finance",
+    icon: <TrendingUp size={15} />,
     permission: "manage_fees",
     children: [
-      { label: "Fee Structure", icon: <FileText size={13} />, page: "fee-structure" },
-      { label: "Invoices",      icon: <Receipt size={13} />, page: "invoices" },
-      { label: "Payments",      icon: <CreditCard size={13} />, page: "payments" },
-      { label: "Balances",      icon: <Wallet size={13} />, page: "balances" },
+      { label: "Finance Dashboard", icon: <TrendingUp size={13} />,  page: "finance-dashboard" },
+      { label: "Fee Structure",     icon: <FileText size={13} />,    page: "fee-structure" },
+      { label: "Invoices",          icon: <Receipt size={13} />,     page: "invoices" },
+      { label: "Record Payment",    icon: <CreditCard size={13} />,  page: "record-payment" },
+      { label: "Payment History",   icon: <Clock size={13} />,       page: "payment-history" },
+      { label: "Balances",          icon: <Wallet size={13} />,      page: "balances" },
+      { label: "Reconciliation",    icon: <Scale size={13} />,       page: "reconciliation" },
     ],
   },
   {

@@ -29,6 +29,9 @@ import FeeStructure from "./pages/FeeStructure";
 import Invoices from "./pages/Invoices";
 import Payments from "./pages/Payments";
 import Balances from "./pages/Balances";
+import FinanceDashboard from "./pages/FinanceDashboard";
+import PaymentHistory from "./pages/PaymentHistory";
+import Reconciliation from "./pages/Reconciliation";
 import AnnouncementsPage from "./pages/Announcements";
 import SMS from "./pages/SMS";
 import WhatsApp from "./pages/WhatsApp";
@@ -125,6 +128,8 @@ const redirects: Record<string, string> = {
   "events":            "announcements",
   "all-reports":       "reports",
   "payroll":           "staff",
+  "payments":          "payment-history",
+  "record-payment":    "finance-dashboard",
 };
 
 export default function App() {
@@ -161,11 +166,14 @@ export default function App() {
       case "classes":           return <Classes />;
       case "timetable":         return <Timetable />;
       case "assessments":       return <Assessments />;
-      // Fees
+      // Finance
+      case "finance-dashboard": return <FinanceDashboard />;
       case "fee-structure":     return <FeeStructure />;
       case "invoices":          return <Invoices />;
       case "payments":          return <Payments />;
+      case "payment-history":   return <PaymentHistory />;
       case "balances":          return <Balances />;
+      case "reconciliation":    return <Reconciliation />;
       // Communication
       case "announcements":     return <AnnouncementsPage />;
       case "sms":               return <SMS />;

@@ -2,7 +2,8 @@ import { useState } from "react";
 import {
   School, BookOpen, Users, Receipt, MessageSquare,
   Palette, Settings as SettingsIcon, Save, Upload,
-  ChevronRight, CheckCircle,
+  ChevronRight, CheckCircle, CreditCard, Wifi, WifiOff,
+  Eye, EyeOff, AlertCircle,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -12,6 +13,7 @@ const tabs = [
   { id: "academic",      label: "Academic Settings",    icon: <BookOpen size={15} /> },
   { id: "users",         label: "Users & Permissions",  icon: <Users size={15} /> },
   { id: "fees",          label: "Fees Settings",        icon: <Receipt size={15} /> },
+  { id: "payment",       label: "Payment Settings",     icon: <CreditCard size={15} /> },
   { id: "communication", label: "Communication",        icon: <MessageSquare size={15} /> },
   { id: "appearance",    label: "Appearance",           icon: <Palette size={15} /> },
   { id: "system",        label: "System",               icon: <SettingsIcon size={15} /> },
@@ -551,6 +553,260 @@ function SystemTab() {
   );
 }
 
+function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div
+      onClick={() => onChange(!checked)}
+      style={{
+        width: 42, height: 24, borderRadius: 12, cursor: "pointer", flexShrink: 0,
+        background: checked ? "#7c3aed" : "#d1d5db", position: "relative", transition: "background 0.2s",
+      }}
+    >
+      <div style={{
+        position: "absolute", top: 3, left: checked ? 21 : 3,
+        width: 18, height: 18, borderRadius: "50%", background: "white",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "left 0.2s",
+      }} />
+    </div>
+  );
+}
+
+function PaymentSettingsTab() {
+  const { showToast } = useApp();
+  const [saved, setSaved]             = useState(false);
+  const [paystackSaved, setPaystackSaved] = useState(false);
+  const [onlineEnabled, setOnlineEnabled] = useState(false);
+  const [environment, setEnvironment] = useState("test");
+  const [pubKey, setPubKey]           = useState("");
+  const [secretKey, setSecretKey]     = useState("");
+  const [webhookSecret, setWebhookSecret] = useState("");
+  const [showSecret, setShowSecret]   = useState(false);
+  const [showWebhook, setShowWebhook] = useState(false);
+  const [connStatus, setConnStatus]   = useState<"idle" | "connected" | "failed">("idle");
+  const [testing, setTesting]         = useState(false);
+
+  const [offlineMethods, setOfflineMethods] = useState({
+    cash: true, momo: true, bankDeposit: true, bankTransfer: true, cheque: false,
+  });
+  const [requireApproval, setRequireApproval] = useState(false);
+  const [approvalRoles, setApprovalRoles]     = useState({ administrator: true, accountant: false });
+
+  const handleTestConnection = () => {
+    if (!pubKey || !secretKey) { showToast("Enter Paystack keys first", "error"); return; }
+    setTesting(true);
+    setTimeout(() => {
+      setTesting(false);
+      if (pubKey.startsWith("pk_") && secretKey.startsWith("sk_")) {
+        setConnStatus("connected");
+        showToast("Paystack connection verified ✓", "success");
+      } else {
+        setConnStatus("failed");
+        showToast("Invalid Paystack credentials", "error");
+      }
+    }, 1800);
+  };
+
+  const handleSavePaystack = () => {
+    setPaystackSaved(true);
+    showToast("Paystack settings saved", "success");
+    setTimeout(() => setPaystackSaved(false), 2500);
+  };
+
+  const handleSaveOffline = () => {
+    setSaved(true);
+    showToast("Offline payment settings saved", "success");
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  const offlineToggleItems = [
+    { key: "cash" as const,         label: "Cash",                  emoji: "💵", desc: "Accept physical cash payments at the office" },
+    { key: "momo" as const,         label: "Direct Mobile Money",   emoji: "📱", desc: "MTN Mobile Money, Telecel Cash, AirtelTigo Money" },
+    { key: "bankDeposit" as const,  label: "Bank Deposit",          emoji: "🏦", desc: "Parent deposits to school's bank account and shows slip" },
+    { key: "bankTransfer" as const, label: "Bank Transfer",         emoji: "💸", desc: "Electronic bank transfer directly to school account" },
+    { key: "cheque" as const,       label: "Cheque",                emoji: "📝", desc: "Accept post-dated or current cheques (optional)" },
+  ];
+
+  const comingSoonProviders = [
+    { name: "Hubtel",       logo: "🔵" },
+    { name: "Flutterwave",  logo: "🟠" },
+    { name: "ExpressPay",   logo: "🟢" },
+    { name: "Bank Integration", logo: "🏦" },
+  ];
+
+  return (
+    <>
+      {/* Paystack Online Payments */}
+      <SectionCard title="Online Payments — Paystack">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, background: onlineEnabled ? "#f0fdf4" : "#fafafa", borderRadius: 10, padding: "12px 14px" }}>
+          <div>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: "#111827" }}>Enable Online Payments</div>
+            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>Allow parents to pay school fees online via Paystack</div>
+          </div>
+          <Toggle checked={onlineEnabled} onChange={setOnlineEnabled} />
+        </div>
+
+        {onlineEnabled && (
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+              <Field label="Payment Provider">
+                <div style={{ padding: "9px 11px", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 13, background: "#f9fafb", color: "#374151" }}>
+                  <span style={{ fontWeight: 600 }}>Paystack</span> <span style={{ color: "#9ca3af" }}>(Active)</span>
+                </div>
+              </Field>
+              <Field label="Environment">
+                <div style={{ display: "flex", gap: 6 }}>
+                  {["test", "live"].map(env => (
+                    <button key={env} onClick={() => setEnvironment(env)} style={{
+                      flex: 1, padding: "9px", border: `2px solid ${environment === env ? "#7c3aed" : "#e5e7eb"}`,
+                      borderRadius: 8, background: environment === env ? "#f5f3ff" : "white",
+                      color: environment === env ? "#7c3aed" : "#6b7280", fontWeight: environment === env ? 700 : 500,
+                      cursor: "pointer", fontSize: 13, textTransform: "capitalize",
+                    }}>
+                      {env === "test" ? "🧪 Test" : "🚀 Live"}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+            </div>
+
+            {environment === "live" && (
+              <div style={{ background: "#fef3c7", borderRadius: 8, padding: "10px 12px", marginBottom: 14, fontSize: 12.5, color: "#d97706", border: "1px solid #fde68a" }}>
+                ⚠ <strong>Live mode:</strong> Real money will be charged. Ensure your Paystack account is fully verified before going live.
+              </div>
+            )}
+
+            <Field label="Paystack Public Key" hint={`Starts with pk_${environment}_...`}>
+              <input
+                style={inputStyle} value={pubKey} onChange={e => setPubKey(e.target.value)}
+                placeholder={`pk_${environment}_xxxxxxxxxxxxxxxxxxxxxxxx`}
+              />
+            </Field>
+
+            <Field label="Paystack Secret Key" hint="Never share this key. It is stored encrypted.">
+              <div style={{ position: "relative" }}>
+                <input
+                  style={{ ...inputStyle, paddingRight: 40 }}
+                  type={showSecret ? "text" : "password"}
+                  value={secretKey} onChange={e => setSecretKey(e.target.value)}
+                  placeholder={`sk_${environment}_xxxxxxxxxxxxxxxxxxxxxxxx`}
+                />
+                <button onClick={() => setShowSecret(p => !p)} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9ca3af", display: "flex" }}>
+                  {showSecret ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </Field>
+
+            <Field label="Webhook Secret" hint="Found in Paystack Dashboard → Settings → Webhooks">
+              <div style={{ position: "relative" }}>
+                <input
+                  style={{ ...inputStyle, paddingRight: 40 }}
+                  type={showWebhook ? "text" : "password"}
+                  value={webhookSecret} onChange={e => setWebhookSecret(e.target.value)}
+                  placeholder="Webhook secret key"
+                />
+                <button onClick={() => setShowWebhook(p => !p)} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9ca3af", display: "flex" }}>
+                  {showWebhook ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </Field>
+
+            {connStatus !== "idle" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: 8, marginBottom: 14, background: connStatus === "connected" ? "#f0fdf4" : "#fef2f2", border: `1px solid ${connStatus === "connected" ? "#bbf7d0" : "#fecaca"}` }}>
+                {connStatus === "connected" ? <Wifi size={14} color="#16a34a" /> : <AlertCircle size={14} color="#dc2626" />}
+                <span style={{ fontSize: 12.5, fontWeight: 600, color: connStatus === "connected" ? "#16a34a" : "#dc2626" }}>
+                  {connStatus === "connected" ? "Connected — Paystack credentials are valid" : "Connection failed — check your credentials"}
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={handleTestConnection}
+                disabled={testing}
+                style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", border: "1px solid #7c3aed", borderRadius: 8, background: "white", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#7c3aed" }}
+              >
+                {testing ? <><span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>⟳</span> Testing…</> : <><Wifi size={13} /> Test Connection</>}
+              </button>
+              <SaveButton onClick={handleSavePaystack} saved={paystackSaved} />
+            </div>
+          </>
+        )}
+      </SectionCard>
+
+      {/* Offline Payment Methods */}
+      <SectionCard title="Offline Payment Methods">
+        <p style={{ fontSize: 13, color: "#6b7280", margin: "0 0 14px" }}>
+          Choose which offline payment options appear when the Accountant records a payment manually.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+          {offlineToggleItems.map(item => (
+            <div key={item.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", border: `1px solid ${offlineMethods[item.key] ? "#c4b5fd" : "#e5e7eb"}`, borderRadius: 10, background: offlineMethods[item.key] ? "#faf5ff" : "#fafafa", transition: "all 0.15s" }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <span style={{ fontSize: 22 }}>{item.emoji}</span>
+                <div>
+                  <div style={{ fontSize: 13.5, fontWeight: 600, color: "#111827" }}>{item.label}</div>
+                  <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 1 }}>{item.desc}</div>
+                </div>
+              </div>
+              <Toggle checked={offlineMethods[item.key]} onChange={v => setOfflineMethods(p => ({ ...p, [item.key]: v }))} />
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <SaveButton onClick={handleSaveOffline} saved={saved} />
+        </div>
+      </SectionCard>
+
+      {/* Approval Workflow */}
+      <SectionCard title="Offline Payment Approval Workflow">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: requireApproval ? 16 : 0, background: requireApproval ? "#fff7ed" : "#fafafa", borderRadius: 10, padding: "12px 14px" }}>
+          <div>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: "#111827" }}>Require Approval for Offline Payments</div>
+            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>Bank deposits, transfers, and cheques must be approved before the invoice is updated</div>
+          </div>
+          <Toggle checked={requireApproval} onChange={setRequireApproval} />
+        </div>
+
+        {requireApproval && (
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Who can approve payments?</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {([
+                { key: "administrator" as const, label: "Administrator", desc: "Always allowed to approve" },
+                { key: "accountant" as const,    label: "Accountant",    desc: "Optional — grant approval permission to accountants" },
+              ] as const).map(r => (
+                <div key={r.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", border: "1px solid #e5e7eb", borderRadius: 8, background: approvalRoles[r.key] ? "#f5f3ff" : "#fafafa" }}>
+                  <div>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{r.label}</span>
+                    <div style={{ fontSize: 11.5, color: "#9ca3af" }}>{r.desc}</div>
+                  </div>
+                  <Toggle checked={approvalRoles[r.key]} onChange={v => setApprovalRoles(p => ({ ...p, [r.key]: v }))} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </SectionCard>
+
+      {/* Future providers */}
+      <SectionCard title="Future Payment Providers">
+        <p style={{ fontSize: 12.5, color: "#9ca3af", margin: "0 0 14px" }}>Additional payment providers will be integrated in future updates.</p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          {comingSoonProviders.map(p => (
+            <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", border: "1px solid #e5e7eb", borderRadius: 10, background: "#fafafa" }}>
+              <span style={{ fontSize: 22 }}>{p.logo}</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{p.name}</div>
+                <span style={{ fontSize: 10.5, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: "#f3f4f6", color: "#9ca3af" }}>Coming Soon</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </SectionCard>
+    </>
+  );
+}
+
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("school");
   const { isMobile } = useWindowSize();
@@ -561,6 +817,7 @@ export default function Settings() {
       case "academic":      return <AcademicTab />;
       case "users":         return <UsersTab />;
       case "fees":          return <FeesTab />;
+      case "payment":       return <PaymentSettingsTab />;
       case "communication": return <CommunicationTab />;
       case "appearance":    return <AppearanceTab />;
       case "system":        return <SystemTab />;

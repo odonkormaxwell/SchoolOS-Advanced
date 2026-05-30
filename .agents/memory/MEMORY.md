@@ -1,2 +1,3 @@
 - [SchoolOS stack & conventions](school-os-stack.md) — React+Vite+TS, inline styles only, lucide-react icons, pnpm monorepo; no Tailwind/CSS modules.
 - [SchoolOS sidebar Fast Refresh quirk](school-os-sidebar-hmr.md) — `rolePermissions` export in Sidebar.tsx causes HMR invalidation warning; not a real error, app still works.
+- [SchoolOS Finance module structure](school-os-finance.md) — Finance pages, sidebar items, routes, and modal locations for the Finance & Payments module.

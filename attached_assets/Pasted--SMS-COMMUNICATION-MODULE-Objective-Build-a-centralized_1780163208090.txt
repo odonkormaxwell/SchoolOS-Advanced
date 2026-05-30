@@ -1,0 +1,512 @@
+# SMS COMMUNICATION MODULE
+
+## Objective
+
+Build a centralized SMS communication system for Edulex that allows schools to send branded SMS messages to parents, guardians, students, and staff without requiring each school to create its own SMS provider account.
+
+Edulex should manage the SMS infrastructure centrally while allowing each school to have its own approved Sender ID.
+
+The goal is to make SMS setup simple for schools while preserving their brand identity.
+
+---
+
+# SMS ARCHITECTURE
+
+Edulex should own and manage the SMS provider account.
+
+Recommended Provider:
+
+Arkesel SMS API
+
+Future Providers:
+
+* Hubtel
+* mNotify
+* Nalo Solutions
+
+Schools should NOT be required to:
+
+* Create Arkesel accounts
+* Manage API keys
+* Configure SMS gateways
+* Purchase SMS directly from providers
+
+Edulex should handle all SMS infrastructure.
+
+---
+
+# SMS FLOW
+
+School Admin sends SMS
+
+↓
+
+Edulex SMS Gateway
+
+↓
+
+Arkesel API
+
+↓
+
+Parent / Student / Staff
+
+SMS should appear from the school's approved Sender ID.
+
+Example:
+
+From: VenusBaby
+
+Dear Parent,
+Michael Ofori was absent from school today.
+
+Not:
+
+From: EDULEX
+
+---
+
+# SMS SETTINGS
+
+Create:
+
+Settings → Communication → SMS
+
+Sections:
+
+## SMS Status
+
+Display:
+
+* SMS Enabled
+* SMS Disabled
+
+## SMS Balance
+
+Display:
+
+* Current SMS Credits
+* SMS Used This Month
+* Remaining SMS Credits
+
+Example:
+
+SMS Credits: 2,500
+
+Used: 1,250
+
+Remaining: 1,250
+
+---
+
+# SENDER ID MANAGEMENT
+
+Each school should have its own Sender ID.
+
+The Sender ID should be displayed exactly as approved.
+
+Do NOT force uppercase.
+
+Allow normal branding.
+
+Examples:
+
+* Stanbic
+* Fidelity
+* VenusBaby
+* StMarys
+* RoyalInt
+* BlueCrest
+* Edulex
+
+Do not automatically convert to:
+
+* STANBIC
+* FIDELITY
+* VENUSBABY
+
+---
+
+# SENDER ID RULES
+
+Allow:
+
+* Uppercase letters
+* Lowercase letters
+* Numbers
+
+Examples:
+
+* Stanbic
+* VBNest
+* Edulex
+* ABC123
+
+Disallow:
+
+* Special characters
+* Multiple spaces
+* Emojis
+
+Examples:
+
+Invalid:
+
+* St. Mary's
+* Royal@School
+* School#
+* Venus Baby Nest
+
+---
+
+# CHARACTER LIMIT
+
+Maximum Sender ID Length:
+
+11 Characters
+
+Display live character counter.
+
+Example:
+
+Sender ID
+
+VenusBaby
+
+9 / 11 Characters
+
+---
+
+# AUTO SUGGESTIONS
+
+When a school is created, automatically generate Sender ID suggestions.
+
+Example:
+
+School Name:
+
+Venus Baby Nest
+
+Suggested Sender IDs:
+
+* VenusBaby
+* VBNest
+* VBabyNest
+
+Example:
+
+School Name:
+
+St. Mary's Preparatory School
+
+Suggested Sender IDs:
+
+* StMarys
+* StMaryPrep
+* MarySchool
+
+School can choose or create their own.
+
+---
+
+# REQUEST SENDER ID
+
+Create button:
+
+Request Sender ID
+
+Workflow:
+
+1. School enters Sender ID.
+2. System validates length.
+3. Request submitted.
+4. Super Admin reviews.
+5. Sender ID approved or rejected.
+6. Status updated.
+
+Statuses:
+
+* Pending
+* Approved
+* Rejected
+* Suspended
+
+---
+
+# SUPER ADMIN SENDER ID MANAGEMENT
+
+Create:
+
+Super Admin → SMS → Sender IDs
+
+Table:
+
+* School Name
+* Sender ID
+* Status
+* Date Requested
+
+Actions:
+
+* Approve
+* Reject
+* Suspend
+* Reactivate
+
+---
+
+# SMS CREDITS SYSTEM
+
+Edulex should manage SMS credits centrally.
+
+Each school has an SMS wallet.
+
+Example:
+
+SMS Balance: 1,000 Credits
+
+When SMS are sent:
+
+100 messages sent
+
+↓
+
+Balance becomes
+
+900 Credits
+
+---
+
+# SMS PURCHASES
+
+Create:
+
+Billing → SMS Credits
+
+Schools can purchase SMS bundles.
+
+Example Bundles:
+
+Starter
+
+500 SMS
+
+Growth
+
+1,500 SMS
+
+Professional
+
+5,000 SMS
+
+Enterprise
+
+10,000 SMS
+
+Custom bundles should also be supported.
+
+---
+
+# SMS TEMPLATES
+
+Create:
+
+Communication → SMS Templates
+
+Templates:
+
+* Attendance Alert
+* Fee Reminder
+* Payment Confirmation
+* Admission Confirmation
+* Exam Reminder
+* Result Published
+* General Announcement
+
+Variables:
+
+* Student Name
+* Parent Name
+* Class
+* Amount
+* Balance
+* School Name
+
+Example:
+
+Dear {ParentName},
+
+This is a reminder that {StudentName}'s outstanding balance is GHS {Balance}.
+
+Regards,
+{SchoolName}
+
+---
+
+# BULK SMS
+
+Allow sending SMS to:
+
+* All Parents
+* All Students
+* All Staff
+* Specific Class
+* Specific Student
+* Specific Parent
+
+Display:
+
+Estimated SMS Cost
+
+Example:
+
+Recipients: 250
+
+Estimated Credits: 250
+
+Confirm Send
+
+---
+
+# SMS HISTORY
+
+Create:
+
+Communication → SMS History
+
+Columns:
+
+* Date
+* Recipient
+* Sender ID
+* Message Preview
+* Status
+* Credits Used
+
+Statuses:
+
+* Sent
+* Delivered
+* Failed
+* Pending
+
+---
+
+# DELIVERY REPORTS
+
+Display:
+
+* Total Sent
+* Delivered
+* Failed
+* Pending
+
+Allow filtering by:
+
+* Date
+* Class
+* Message Type
+
+---
+
+# AUTOMATIC SMS TRIGGERS
+
+Allow schools to enable or disable:
+
+Attendance Alert
+
+Fee Reminder
+
+Payment Confirmation
+
+Admission Approval
+
+Exam Reminder
+
+Result Published
+
+Birthday Greeting
+
+Each trigger should have an ON/OFF toggle.
+
+---
+
+# ROLE ACCESS
+
+Administrator:
+
+* Manage SMS
+* Purchase Credits
+* Request Sender ID
+* View Reports
+
+Accountant:
+
+* Send Fee Reminders
+* View SMS History
+
+Teacher:
+
+* Send Attendance Alerts
+* Send Class Notifications
+
+Parent:
+
+* Receive Messages Only
+
+Student:
+
+* Receive Messages Only
+
+---
+
+# FUTURE READY FEATURES
+
+Prepare architecture for:
+
+* WhatsApp Messaging
+* Voice Calls
+* USSD Notifications
+* Email Campaigns
+* SMS Scheduling
+* Automated Workflows
+
+Mark as:
+
+Coming Soon
+
+---
+
+# TESTING REQUIREMENTS
+
+Verify:
+
+✓ Sender ID request workflow
+
+✓ Sender ID approval workflow
+
+✓ SMS credit deduction
+
+✓ SMS balance updates
+
+✓ Bulk SMS
+
+✓ SMS templates
+
+✓ Attendance alerts
+
+✓ Fee reminders
+
+✓ Payment confirmations
+
+✓ SMS history
+
+✓ Delivery reports
+
+✓ Character validation
+
+✓ School-specific branding
+
+✓ Mobile responsiveness
+
+The final SMS module should allow schools to send messages under their own school brand while Edulex manages the SMS infrastructure centrally.
