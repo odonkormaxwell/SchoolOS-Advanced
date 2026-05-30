@@ -1,0 +1,433 @@
+# Edulex Permission Fix – Step 1: Super Admin Role Only
+
+## Objective
+
+Fix and enforce the Super Admin role first before working on other roles.
+
+The permission system is currently not working properly. Some users are seeing data, analytics, tabs, and actions they should not see, while some users are missing features they should have.
+
+For this task, focus only on the Super Admin role.
+
+Do not modify other roles yet unless required to prevent conflicts.
+
+---
+
+# Super Admin Definition
+
+The Super Admin is the Edulex platform owner/admin.
+
+This role manages the SaaS platform itself, not the day-to-day academic or financial operations of individual schools.
+
+The Super Admin should be able to manage all schools, subscriptions, platform billing, SMS infrastructure, sender IDs, support, and platform-level settings.
+
+---
+
+# Super Admin Dashboard
+
+Create or fix:
+
+Super Admin Dashboard
+
+The dashboard should show platform-wide analytics only.
+
+## Super Admin should see:
+
+* Total Schools
+* Active Schools
+* Suspended Schools
+* Trial Schools
+* Paid Schools
+* Expired Subscriptions
+* Monthly Revenue
+* Annual Revenue
+* SMS Credits Sold
+* Pending Sender ID Requests
+* Support Tickets
+* Recent School Signups
+
+## Super Admin should NOT see by default:
+
+* A specific school’s classroom attendance
+* A specific school’s student scores
+* A specific school’s report cards
+* A specific school’s internal fee records unless viewing that school for support
+
+School-specific data should only be accessible through a controlled school view or impersonation mode.
+
+---
+
+# Super Admin Sidebar
+
+The Super Admin sidebar should only contain platform-level items:
+
+1. Dashboard
+2. Schools
+3. Subscriptions
+4. Edulex Billing
+5. SMS Management
+6. Sender ID Requests
+7. Platform Users
+8. Support / Tickets
+9. Platform Reports
+10. Audit Logs
+11. Platform Settings
+12. Demo Credentials, development mode only
+13. Logout
+
+---
+
+# Schools Module
+
+Super Admin can:
+
+* View all schools
+* Create school
+* Edit school profile
+* Activate school
+* Suspend school
+* Reactivate school
+* Archive school
+* View school status
+* View school subscription
+* View school usage
+* View school owner details
+
+Super Admin should not directly edit:
+
+* Student scores
+* Attendance
+* Report cards
+* Payments
+* Receipts
+
+unless using support impersonation with audit logging.
+
+---
+
+# Subscriptions Module
+
+Super Admin can:
+
+* Create subscription plans
+* Edit plans
+* Assign plan to school
+* Upgrade school plan
+* Downgrade school plan
+* Suspend expired schools
+* Reactivate paid schools
+* View subscription history
+* View failed renewals
+
+---
+
+# Edulex Billing
+
+Super Admin can view:
+
+* Total Edulex revenue
+* Monthly recurring revenue
+* Annual revenue
+* Paid invoices
+* Failed payments
+* Pending payments
+* School subscription invoices
+* SMS credit purchases
+
+Super Admin can:
+
+* Generate invoice
+* Download invoice
+* Print invoice
+* Export billing report
+
+---
+
+# SMS Management
+
+Super Admin can:
+
+* Configure global SMS provider
+* Add Arkesel API key
+* Set SMS unit pricing
+* Create SMS bundles
+* Allocate SMS credits to schools
+* View SMS usage by school
+* View failed SMS logs
+* View delivery reports
+
+Super Admin should not need to access school-level SMS templates unless impersonating for support.
+
+---
+
+# Sender ID Requests
+
+Super Admin can:
+
+* View pending sender ID requests
+* Approve sender ID
+* Reject sender ID
+* Suspend sender ID
+* Reactivate sender ID
+
+Sender ID rules:
+
+* Do not force uppercase
+* Allow uppercase letters
+* Allow lowercase letters
+* Allow numbers
+* Maximum 11 characters
+* No special characters
+* No spaces
+* No emojis
+
+Examples allowed:
+
+* Stanbic
+* VenusBaby
+* VBNest
+* StMarys
+
+---
+
+# Platform Users
+
+Super Admin can manage Edulex internal users only.
+
+Examples:
+
+* Support Admin
+* Billing Admin
+* Technical Admin
+
+Super Admin should not mix platform users with school users.
+
+School users belong under their specific school.
+
+---
+
+# Support / Tickets
+
+Super Admin can:
+
+* View support tickets
+* Assign support tickets
+* Reply to tickets
+* Change ticket status
+* View related school information
+
+Ticket statuses:
+
+* Open
+* In Progress
+* Resolved
+* Closed
+
+---
+
+# Impersonation
+
+Super Admin may impersonate a school user only for support.
+
+Impersonation must be controlled.
+
+## Requirements:
+
+* Show clear banner: “You are impersonating [User Name] at [School Name]”
+* Require reason before impersonating
+* Log impersonation start
+* Log impersonation end
+* Allow exit impersonation
+* Prevent silent impersonation
+
+Super Admin should not permanently change academic or financial records while impersonating unless necessary and logged.
+
+---
+
+# Platform Reports
+
+Super Admin reports should include:
+
+* Schools Report
+* Subscription Report
+* Revenue Report
+* SMS Usage Report
+* Sender ID Report
+* Support Ticket Report
+* User Activity Report
+
+Super Admin reports should not display detailed student academic data by default.
+
+---
+
+# Audit Logs
+
+Super Admin can view platform audit logs.
+
+Track:
+
+* School created
+* School suspended
+* School reactivated
+* Subscription changed
+* Sender ID approved
+* SMS credits allocated
+* User impersonated
+* Platform setting changed
+* Billing action performed
+
+Audit logs must not be deletable.
+
+---
+
+# Platform Settings
+
+Super Admin can configure:
+
+* Edulex branding
+* Subscription plans
+* Payment settings for Edulex subscriptions
+* Global SMS provider
+* Email provider
+* System notifications
+* Maintenance mode
+* Security settings
+
+Super Admin should not configure individual school branding here.
+
+School branding belongs to School Owner.
+
+---
+
+# Demo Credentials
+
+Show Demo Credentials only in development mode.
+
+Route:
+
+Super Admin → Demo Credentials
+
+Display:
+
+* Role
+* Name
+* Email
+* Password
+* Permissions
+
+Automatically hide this page in production.
+
+---
+
+# Super Admin Restrictions
+
+Super Admin should not use the normal school dashboard as their default dashboard.
+
+Super Admin should not see:
+
+* Teacher sidebar
+* Accountant sidebar
+* Headteacher sidebar
+* Parent portal
+* Student portal
+
+unless impersonating.
+
+Super Admin should not directly delete:
+
+* School database
+* Student records
+* Payment records
+* Receipts
+* Report cards
+* Audit logs
+
+Use:
+
+* Suspend
+* Archive
+* Deactivate
+
+instead of delete.
+
+Permanent school deletion should require a separate strict workflow and should not be available as a normal button.
+
+---
+
+# Permission Enforcement
+
+Create or verify Super Admin permissions:
+
+* platform_dashboard_view
+* manage_schools
+* view_schools
+* manage_subscriptions
+* view_subscriptions
+* manage_platform_billing
+* view_platform_billing
+* manage_sms_provider
+* manage_sms_credits
+* manage_sender_ids
+* manage_platform_users
+* manage_support_tickets
+* view_platform_reports
+* view_platform_audit_logs
+* manage_platform_settings
+* impersonate_users
+* view_demo_credentials_dev_only
+
+---
+
+# Route Protection
+
+Super Admin should be allowed to access only platform-level routes by default.
+
+Examples:
+
+Allowed:
+
+* /super-admin/dashboard
+* /super-admin/schools
+* /super-admin/subscriptions
+* /super-admin/billing
+* /super-admin/sms
+* /super-admin/sender-ids
+* /super-admin/support
+* /super-admin/reports
+* /super-admin/settings
+
+Blocked unless impersonating:
+
+* /dashboard
+* /students
+* /academics
+* /fees
+* /attendance
+* /report-cards
+* /parent
+* /student
+
+---
+
+# Testing Requirements
+
+Test only the Super Admin role in this step.
+
+Verify:
+
+* Super Admin logs in successfully
+* Super Admin lands on Super Admin Dashboard
+* Super Admin sees only platform sidebar
+* Super Admin can manage schools
+* Super Admin can manage subscriptions
+* Super Admin can view Edulex billing
+* Super Admin can manage SMS provider
+* Super Admin can approve/reject Sender IDs
+* Super Admin can view platform reports
+* Super Admin can view audit logs
+* Super Admin cannot access normal school dashboard unless impersonating
+* Super Admin cannot access Parent or Student portals unless impersonating
+* Demo Credentials page is visible only in development mode
+* All Super Admin buttons work or show proper Coming Soon message
+* All restricted routes show Access Restricted page
+
+Do not continue to School Owner, Headteacher, Teacher, Accountant, Admissions Officer, Parent, or Student until Super Admin access is fully corrected and tested.

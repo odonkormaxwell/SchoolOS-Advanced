@@ -1,0 +1,443 @@
+# Edulex Permission Fix – Step 2: School Owner (Proprietor) Role Only
+
+## Objective
+
+Fix and enforce the School Owner (Proprietor) role throughout the entire system.
+
+The School Owner is the owner of the school business.
+
+This role focuses on:
+
+* School performance
+* Revenue
+* Billing
+* Staff oversight
+* School branding
+* System settings
+* User management
+* Backups
+* Compliance
+
+The School Owner is NOT responsible for day-to-day academic operations.
+
+Those responsibilities belong to the Headteacher.
+
+This separation must be strictly enforced.
+
+---
+
+# School Owner Dashboard
+
+Create or fix:
+
+School Owner Dashboard
+
+The dashboard should focus on business and management insights.
+
+---
+
+## School Owner Should See
+
+### School Overview
+
+* Total Students
+* Total Staff
+* Active Classes
+* Academic Year
+* School Status
+
+---
+
+### Financial Overview
+
+* Total Fees Expected
+* Total Fees Collected
+* Outstanding Balances
+* Overdue Invoices
+* Revenue Trend
+
+---
+
+### Subscription Overview
+
+* Current Plan
+* Subscription Status
+* Renewal Date
+* Student Limit
+* SMS Credit Balance
+
+---
+
+### Quick Actions
+
+* Manage Users
+* View Finance Reports
+* Purchase SMS Credits
+* Request Sender ID
+* Manage Branding
+* Generate Backup
+
+---
+
+# School Owner Sidebar
+
+The School Owner sidebar should contain:
+
+1. Dashboard
+2. Students (View Only)
+3. Staff
+4. Finance
+5. Reports
+6. Communication
+7. User Management
+8. School Branding
+9. Backup & Recovery
+10. Subscription & Billing
+11. Audit Logs
+12. Settings
+13. Profile
+14. Logout
+
+---
+
+# Students Module
+
+School Owner should have limited student access.
+
+Can:
+
+* View students
+* Search students
+* View student profiles
+* View enrollment statistics
+
+Cannot:
+
+* Enter scores
+* Approve results
+* Mark attendance
+* Manage assessments
+
+The School Owner should not be managing academic records.
+
+---
+
+# Staff Module
+
+School Owner can:
+
+* View staff
+* Create staff accounts
+* Edit staff accounts
+* Archive staff accounts
+* Reset staff passwords
+* Activate users
+* Deactivate users
+
+Can view:
+
+* Teacher assignments
+* User activity
+* Last login
+
+Cannot:
+
+* Assign academic results
+* Enter attendance
+
+---
+
+# User Management
+
+School Owner is the primary user manager within the school.
+
+Can:
+
+* Create users
+* Edit users
+* Suspend users
+* Activate users
+* Reset passwords
+* Assign roles
+
+Roles available:
+
+* Headteacher
+* Teacher
+* Accountant
+* Admissions Officer
+* Parent
+* Student
+
+Cannot:
+
+* Create Super Admins
+* Modify platform-level roles
+
+---
+
+# Finance Module
+
+School Owner should have full financial oversight.
+
+Can:
+
+* View fee structures
+* Create fee structures
+* Edit fee structures
+* Archive fee structures
+* View invoices
+* View payments
+* View balances
+* View receipts
+* View finance reports
+
+Can approve:
+
+* Fee structure changes
+* Offline payment approvals
+* Payment reversals
+
+Cannot:
+
+* Delete payments
+* Delete invoices
+* Delete receipts
+
+Use:
+
+* Reverse
+* Void
+* Archive
+
+instead of delete.
+
+---
+
+# Reports Module
+
+School Owner can view:
+
+* Finance Reports
+* Student Enrollment Reports
+* Attendance Summary Reports
+* Academic Performance Reports
+* Revenue Reports
+* SMS Usage Reports
+* User Activity Reports
+
+Cannot edit academic reports.
+
+View only.
+
+---
+
+# Communication Module
+
+School Owner can:
+
+* Purchase SMS Credits
+* Request Sender ID
+* View SMS Usage
+* View Delivery Reports
+* Create school announcements
+* Send school-wide messages
+
+Cannot:
+
+* Configure SMS provider API
+* Configure global SMS infrastructure
+
+Those belong to Super Admin.
+
+---
+
+# School Branding
+
+School Owner can manage:
+
+* School Logo
+* School Name
+* School Motto
+* School Address
+* School Contact Details
+* Report Card Branding
+* Receipt Branding
+* Invoice Branding
+* School Stamp
+
+This is one of the most important School Owner responsibilities.
+
+---
+
+# Backup & Recovery
+
+School Owner can:
+
+* Generate Backup
+* Download Backup
+* View Backup History
+
+Cannot:
+
+* Change platform backup settings
+
+Restore Backup:
+
+Allowed with confirmation workflow.
+
+---
+
+# Subscription & Billing
+
+School Owner is the only school-level role that should manage subscriptions.
+
+Can:
+
+* View current plan
+* Upgrade plan
+* Downgrade plan
+* Renew subscription
+* View billing history
+* Download invoices
+* Download receipts
+* Purchase SMS credits
+
+No other school role should manage subscriptions.
+
+---
+
+# Audit Logs
+
+School Owner can view:
+
+* User activity
+* Payment reversals
+* Result publication history
+* Attendance changes
+* Login history
+
+Cannot:
+
+* Delete audit logs
+* Edit audit logs
+
+---
+
+# Settings
+
+School Owner can manage:
+
+* School Settings
+* Academic Year Settings
+* Communication Settings
+* Payment Settings
+* Security Settings
+
+Cannot:
+
+* Access platform settings
+* Access Super Admin settings
+
+---
+
+# School Owner Restrictions
+
+School Owner must NOT:
+
+* Enter assessment scores
+* Mark attendance
+* Approve results
+* Publish results
+* Reopen results
+* Lock results
+* Assign subject scores
+
+These responsibilities belong to the Headteacher and Teachers.
+
+---
+
+# Route Protection
+
+School Owner Allowed:
+
+* /owner/dashboard
+* /finance
+* /reports
+* /users
+* /branding
+* /subscription
+* /settings
+* /communication
+
+School Owner Blocked:
+
+* /assessments/enter-scores
+* /results/publish
+* /results/approve
+* /attendance/mark
+
+Show:
+
+Access Restricted
+
+You do not have permission to access this page.
+
+---
+
+# Permission Set
+
+Create or verify:
+
+* school_dashboard_view
+* view_students
+* manage_staff
+* manage_users
+* manage_fee_structures
+* approve_finance_actions
+* view_finance
+* view_reports
+* manage_communication
+* manage_school_branding
+* manage_backups
+* manage_subscription
+* view_audit_logs
+* manage_school_settings
+
+---
+
+# Testing Requirements
+
+Verify:
+
+✓ School Owner sees only School Owner sidebar
+
+✓ School Owner can manage users
+
+✓ School Owner can manage fee structures
+
+✓ School Owner can manage branding
+
+✓ School Owner can manage subscription
+
+✓ School Owner can purchase SMS credits
+
+✓ School Owner can request Sender ID
+
+✓ School Owner can generate backups
+
+✓ School Owner can view reports
+
+✓ School Owner cannot enter scores
+
+✓ School Owner cannot approve results
+
+✓ School Owner cannot publish results
+
+✓ School Owner cannot mark attendance
+
+✓ School Owner cannot access Super Admin pages
+
+✓ All restricted routes show Access Restricted
+
+Do not proceed to Headteacher until the School Owner role is fully corrected, tested, and working exactly as defined.

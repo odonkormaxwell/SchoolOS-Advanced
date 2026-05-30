@@ -30,6 +30,7 @@ export type SecurityEvent = {
 };
 
 const INITIAL_USERS: AuthUser[] = [
+  { id: "u0", name: "Daniel Asiedu",    role: "Super Admin",           roleKey: "super_admin",        email: "superadmin@edulex.io",           password: "password123", initials: "DA", avatarBg: "#e0e7ff", avatarColor: "#3730a3", phone: "+233 30 000 0001", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
   { id: "u1", name: "Emmanuel Mensah",  role: "Headteacher",           roleKey: "headteacher",        email: "headteacher@happykids.edu.gh",  password: "password123", initials: "EM", avatarBg: "#ede9fe", avatarColor: "#7c3aed", phone: "+233 24 456 7890", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
   { id: "u2", name: "Kofi Mensah",      role: "School Owner",          roleKey: "school_owner",       email: "admin@happykids.edu.gh",         password: "password123", initials: "KM", avatarBg: "#dbeafe", avatarColor: "#0369a1", phone: "+233 20 345 6789", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },
   { id: "u3", name: "Ama Owusu",        role: "Teacher (Class)",       roleKey: "teacher",            email: "ama.owusu@happykids.edu.gh",    password: "password123", initials: "AO", avatarBg: "#fce7f3", avatarColor: "#9d174d", phone: "+233 26 234 5678", language: "English (UK)", timezone: "Africa/Accra", twoFAEnabled: false },

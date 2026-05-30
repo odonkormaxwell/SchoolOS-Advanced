@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 const quickUsers = [
+  { label: "Super Admin",       email: "superadmin@edulex.io",         color: "#3730a3", bg: "#e0e7ff" },
   { label: "Headteacher",       email: "headteacher@happykids.edu.gh", color: "#7c3aed", bg: "#f5f3ff" },
   { label: "Teacher",           email: "ama.owusu@happykids.edu.gh",   color: "#2563eb", bg: "#eff6ff" },
   { label: "Accountant",        email: "accounts@happykids.edu.gh",    color: "#16a34a", bg: "#f0fdf4" },

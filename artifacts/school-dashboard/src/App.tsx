@@ -54,6 +54,7 @@ import Profile from "./pages/Profile";
 import Security from "./pages/Security";
 import ParentPortal from "./pages/ParentPortal";
 import StudentPortal from "./pages/StudentPortal";
+import SuperAdminPortal from "./pages/SuperAdminPortal";
 
 // Hidden / legacy pages (kept for compat, not in sidebar)
 import Gradebook from "./pages/Gradebook";
@@ -286,8 +287,9 @@ export default function App() {
     return <><GlobalStyles /><Login /></>;
   }
 
-  if (user?.roleKey === "parent")  return <ParentPortal />;
-  if (user?.roleKey === "student") return <StudentPortal />;
+  if (user?.roleKey === "super_admin") return <SuperAdminPortal />;
+  if (user?.roleKey === "parent")      return <ParentPortal />;
+  if (user?.roleKey === "student")     return <StudentPortal />;
 
   return <AuthenticatedApp />;
 }
